@@ -6,5 +6,7 @@ namespace V1 {
 
   function hndLoad(_event: Event): void {
     let game: DefenseGame = new DefenseGame();
+    game.init();
+    game.startLoop();
   }
 }
