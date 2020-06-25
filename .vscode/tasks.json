@@ -26,6 +26,19 @@
         ],
         "group": "build",
         "label": "tsc: watch - L11_TowerDefenseFire/tsconfig.json"
+      },
+      {
+        "type": "typescript",
+        "tsconfig": "V1/tsconfig.json",
+        "option": "watch",
+        "problemMatcher": [
+          "$tsc-watch"
+        ],
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
+        "label": "tsc: watch - V1/tsconfig.json"
       }
     ]
 }

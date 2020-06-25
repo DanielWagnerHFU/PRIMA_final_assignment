@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig",
   "compilerOptions": {
-    "outFile": "V1.js",
+    "outFile": "Javascript/V1.js",
     "types": [
       "../FudgeCore/FudgeCore",
       "../FudgeAid/FudgeAid",
