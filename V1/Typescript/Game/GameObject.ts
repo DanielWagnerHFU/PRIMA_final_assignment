@@ -4,7 +4,5 @@ namespace V1 {
     constructor(name: string) {
       super(name);
     }
-
-    //TODO
   }
 }

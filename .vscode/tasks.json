@@ -34,7 +34,10 @@
         "problemMatcher": [
           "$tsc-watch"
         ],
-        "group": "build",
+        "group": {
+          "kind": "build",
+          "isDefault": true
+        },
         "label": "tsc: watch - V1/tsconfig.json"
       },
       {
@@ -44,11 +47,17 @@
         "problemMatcher": [
           "$tsc-watch"
         ],
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        },
+        "group": "build",
         "label": "tsc: watch - MouseToRay/tsconfig.json"
+      },
+      {
+        "type": "typescript",
+        "tsconfig": "V1/tsconfig.json",
+        "problemMatcher": [
+          "$tsc"
+        ],
+        "group": "build",
+        "label": "tsc: build - V1/tsconfig.json"
       }
     ]
 }

@@ -1,6 +1,4 @@
 namespace V1 {
-  
-  import ƒAid = FudgeAid;
 
   export class DefenseGame {
     
@@ -10,8 +8,6 @@ namespace V1 {
     public init(): void {
       this.gametree = new Gametree("gametree");
       this.gametree.init();
-
-      ƒAid.addStandardLightComponents(this.gametree, new ƒ.Color(0.6, 0.6, 0.6));
 
       let camera: Camera = new Camera();
       camera.init();
