@@ -1,17 +1,24 @@
 namespace V1 {
+  
+  import ƒAid = FudgeAid;
+
   export class DefenseGame {
     
-    private gametree: GameObject;
+    private gametree: Gametree;
     private gcanvas: GameCanvas;
 
     public init(): void {
-      this.gametree = this.createGametree();
-      let cmpCamera: ƒ.ComponentCamera = new ƒ.ComponentCamera();
-      cmpCamera.pivot.translate(new ƒ.Vector3(10, 5, 10));
-      cmpCamera.pivot.lookAt(ƒ.Vector3.ZERO());
-      cmpCamera.backgroundColor = ƒ.Color.CSS("lightblue");
+      this.gametree = new Gametree("gametree");
+      this.gametree.init();
+
+      ƒAid.addStandardLightComponents(this.gametree, new ƒ.Color(0.6, 0.6, 0.6));
+
+      let camera: Camera = new Camera();
+      camera.init();
+
       this.gcanvas = new GameCanvas();
-      this.gcanvas.init(this.gametree, cmpCamera);
+      this.gcanvas.init(this.gametree, camera);
+      
       document.querySelector("body").appendChild(this.gcanvas);
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));
     }
@@ -22,12 +29,6 @@ namespace V1 {
 
     private update(_event: ƒ.Eventƒ): void {
       this.gcanvas.update();
-    }
-
-    private createGametree(): ƒ.Node {
-      let tree: GameObject = new GameObject("gametree");
-      //TODO
-      return tree;
     }
   }
 }

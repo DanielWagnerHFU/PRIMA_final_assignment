@@ -64,23 +64,23 @@ declare namespace FudgeCore {
         /**
          * Info(...) displays additional information with low priority
          */
-        static info(_message: Object, ..._args: Object[]): void;
+        static info(_message: unknown, ..._args: unknown[]): void;
         /**
          * Displays information with medium priority
          */
-        static log(_message: Object, ..._args: Object[]): void;
+        static log(_message: unknown, ..._args: unknown[]): void;
         /**
          * Displays information about non-conformities in usage, which is emphasized e.g. by color
          */
-        static warn(_message: Object, ..._args: Object[]): void;
+        static warn(_message: unknown, ..._args: unknown[]): void;
         /**
          * Displays critical information about failures, which is emphasized e.g. by color
          */
-        static error(_message: Object, ..._args: Object[]): void;
+        static error(_message: unknown, ..._args: unknown[]): void;
         /**
          * Displays messages from FUDGE
          */
-        static fudge(_message: Object, ..._args: Object[]): void;
+        static fudge(_message: unknown, ..._args: unknown[]): void;
         /**
          * Clears the output and removes previous messages if possible
          */
@@ -189,6 +189,10 @@ declare namespace FudgeCore {
      * Collect applicable attributes of the instance and copies of their values in a Mutator-object
      */
     function getMutatorOfArbitrary(_object: Object): Mutator;
+    interface MutableForUserInterface {
+        getMutator(): Mutator;
+        updateMutator(_mutator: Mutator): void;
+    }
     /**
      * Base class for all types being mutable using [[Mutator]]-objects, thus providing and using interfaces created at runtime.
      * Mutables provide a [[Mutator]] that is build by collecting all object-properties that are either of a primitive type or again Mutable.
@@ -197,6 +201,9 @@ declare namespace FudgeCore {
      * Otherwise, they will be ignored if not handled by an override of the mutate-method in the subclass and throw errors in an automatically generated user-interface for the object.
      */
     abstract class Mutable extends EventTargetƒ {
+        /**
+         * Decorator allows to attach [[Mutable]] functionality to existing classes.
+         */
         /**
          * Retrieves the type of this mutable subclass as the name of the runtime class
          * @returns The type of the mutable
@@ -545,9 +552,9 @@ declare namespace FudgeCore {
         get copy(): Vector2;
         transform(_matrix: Matrix3x3, _includeTranslation?: boolean): void;
         /**
-         * Adds a z-component to the vector and returns a new Vector3
+         * Adds a z-component of the given magnitude (default=0) to the vector and returns a new Vector3
          */
-        toVector3(): Vector3;
+        toVector3(_z?: number): Vector3;
         toString(): string;
         getMutator(): Mutator;
         protected reduceMutator(_mutator: Mutator): void;
@@ -1070,10 +1077,6 @@ declare namespace FudgeCore {
     class CoatTextured extends Coat {
         color: Color;
         texture: TextureImage;
-        pivot: Matrix3x3;
-        tilingX: number;
-        tilingY: number;
-        repetition: boolean;
     }
 }
 declare namespace FudgeCore {
@@ -1413,6 +1416,7 @@ declare namespace FudgeCore {
         material: Material;
         clrPrimary: Color;
         clrSecondary: Color;
+        pivot: Matrix3x3;
         constructor(_material?: Material);
         serialize(): Serialization;
         deserialize(_serialization: Serialization): Serializable;
@@ -1846,6 +1850,11 @@ declare namespace FudgeCore {
          */
         adjustCamera(): void;
         /**
+         * Returns a [[Ray]] in world coordinates from this camera through the point given in client space
+         */
+        getRayFromClient(_point: Vector2): Ray;
+        pointWorldToClient(_position: Vector3): Vector2;
+        /**
          * Returns a point on the source-rectangle matching the given point on the client rectangle
          */
         pointClientToSource(_client: Vector2): Vector2;
@@ -1881,7 +1890,7 @@ declare namespace FudgeCore {
         /**
          * Switch the viewports focus on or off. Only one viewport in one FUDGE instance can have the focus, thus receiving keyboard events.
          * So a viewport currently having the focus will lose it, when another one receives it. The viewports fire [[Event]]s accordingly.
-         *
+         * // TODO: examine, if this can be achieved by regular DOM-Focus and tabindex=0
          * @param _on
          */
         setFocus(_on: boolean): void;
@@ -2900,6 +2909,8 @@ declare namespace FudgeCore {
         create(): void;
         serialize(): Serialization;
         deserialize(_serialization: Serialization): Serializable;
+        /**Flip the Normals of a Mesh to render opposite side of each polygon*/
+        flipNormals(): void;
         protected calculateFaceNormals(): Float32Array;
         protected abstract createVertices(): Float32Array;
         protected abstract createTextureUVs(): Float32Array;
@@ -3021,6 +3032,25 @@ declare namespace FudgeCore {
         constructor();
         protected createVertices(): Float32Array;
         protected createIndices(): Uint16Array;
+        protected createTextureUVs(): Float32Array;
+        protected createFaceNormals(): Float32Array;
+    }
+}
+declare namespace FudgeCore {
+    /**
+     * Generate a Torus with a given thickness and the number of major- and minor segments
+     * @authors Simon Storl-Schulke, HFU, 2020 | Jirka Dell'Oro-Friedl, HFU, 2020
+     */
+    class MeshTorus extends Mesh {
+        private _thickness;
+        private _majorSegments;
+        private _minorSegments;
+        static readonly iSubclass: number;
+        normals: Float32Array;
+        constructor(_thickness?: number, _majorSegments?: number, _minorSegments?: number);
+        create(): void;
+        protected createIndices(): Uint16Array;
+        protected createVertices(): Float32Array;
         protected createTextureUVs(): Float32Array;
         protected createFaceNormals(): Float32Array;
     }
@@ -3223,6 +3253,13 @@ declare namespace FudgeCore {
         direction: Vector3;
         length: number;
         constructor(_direction?: Vector3, _origin?: Vector3, _length?: number);
+        /**
+         * Returns the point of intersection of this ray with a plane defined by
+         * the given point of origin and the planes normal. All values and calculations
+         * must be relative to the same coordinate system, preferably the world
+         */
+        intersectPlane(_origin: Vector3, _normal: Vector3): Vector3;
+        getDistance(_target: Vector3): Vector3;
     }
 }
 declare namespace FudgeCore {
@@ -3508,7 +3545,7 @@ declare namespace FudgeCore {
         private offset;
         private lastCallToElapsed;
         private timers;
-        private idTimerNext;
+        private idTimerAddedLast;
         constructor();
         /**
          * Returns the game-time-object which starts automatically and serves as base for various internal operations.
@@ -3567,6 +3604,10 @@ declare namespace FudgeCore {
          */
         setTimer(_lapse: number, _count: number, _handler: TimerHandler, ..._arguments: Object[]): number;
         /**
+         * This method is called internally by [[Time]] and [[Timer]] and must not be called otherwise
+         */
+        addTimer(_timer: Timer): number;
+        /**
          * Deletes the timer with the id given by this time object
          */
         deleteTimer(_id: number): void;
@@ -3616,6 +3657,8 @@ declare namespace FudgeCore {
          * @param _count The desired number of calls to _handler, Timer deinstalls automatically after last call. Passing 0 invokes infinite calls
          * @param _handler The [[TimerHandler]] instance to call
          * @param _arguments Additional arguments to pass to _handler
+         *
+         * TODO: for proper handling and deletion, use Time.setTimer instead of instantiating timers yourself.
          */
         constructor(_time: Time, _elapse: number, _count: number, _handler: TimerHandler, ..._arguments: Object[]);
         /**

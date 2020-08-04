@@ -34,11 +34,21 @@
         "problemMatcher": [
           "$tsc-watch"
         ],
+        "group": "build",
+        "label": "tsc: watch - V1/tsconfig.json"
+      },
+      {
+        "type": "typescript",
+        "tsconfig": "MouseToRay/tsconfig.json",
+        "option": "watch",
+        "problemMatcher": [
+          "$tsc-watch"
+        ],
         "group": {
           "kind": "build",
           "isDefault": true
         },
-        "label": "tsc: watch - V1/tsconfig.json"
+        "label": "tsc: watch - MouseToRay/tsconfig.json"
       }
     ]
 }
