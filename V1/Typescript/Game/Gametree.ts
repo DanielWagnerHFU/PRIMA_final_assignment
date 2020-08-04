@@ -20,9 +20,8 @@ namespace V1 {
       // let cmpMesh: ƒ.ComponentMesh = new ƒ.ComponentMesh(mesh);
       // this.addComponent(cmpMesh);
       // cmpMesh.pivot.scale(ƒ.Vector3.ONE(0.2));
-      let ball: Ball = new Ball(new ƒ.Vector3(0, 0, 0), 1);
-      let quad: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(0.9, 0.9, 0));
-      console.log(ball.hasCollision(quad.getLineSegments()));
+      let quad: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(0, 0, 0));
+      let ball: Ball = new Ball(new ƒ.Vector3(-2, 0, 0), 1, quad.getLineSegments());
 
       this.addChild(quad);
       this.addChild(ball);

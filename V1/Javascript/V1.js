@@ -110,9 +110,8 @@ var V1;
             // let cmpMesh: ƒ.ComponentMesh = new ƒ.ComponentMesh(mesh);
             // this.addComponent(cmpMesh);
             // cmpMesh.pivot.scale(ƒ.Vector3.ONE(0.2));
-            let ball = new V1.Ball(new ƒ.Vector3(0, 0, 0), 1);
-            let quad = new V1.ColliderQuad(1, new ƒ.Vector3(0.9, 0.9, 0));
-            console.log(ball.hasCollision(quad.getLineSegments()));
+            let quad = new V1.ColliderQuad(1, new ƒ.Vector3(0, 0, 0));
+            let ball = new V1.Ball(new ƒ.Vector3(-2, 0, 0), 1, quad.getLineSegments());
             this.addChild(quad);
             this.addChild(ball);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
@@ -123,31 +122,35 @@ var V1;
 var V1;
 (function (V1) {
     class Ball extends V1.GameObject {
-        constructor(_position, _radius) {
+        constructor(_position, _radius, _lineSegments) {
             super("Ball");
-            this.position = _position;
-            this.position2 = new ƒ.Vector2(_position.x, _position.y);
+            this.position = new ƒ.Vector2(_position.x, _position.y);
             this.radius = _radius;
-            this.init();
-        }
-        hasCollision(lineSegments) {
-            let hasCollision = false;
-            for (let lineSegment of lineSegments) {
-                let distance = lineSegment.distanceToPoint(this.position2);
-                if (distance <= this.radius / 2) {
-                    hasCollision = true;
-                }
-            }
-            return hasCollision;
-        }
-        init() {
-            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0))));
+            this.speed = new ƒ.Vector3(1, 0, 0);
+            this.lineSegments = _lineSegments;
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(_position.x, _position.y, _position.z))));
             let cmpMaterial = new ƒ.ComponentMaterial(Ball.material);
             cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
             this.addComponent(cmpMaterial);
             let cmpMesh = new ƒ.ComponentMesh(Ball.mesh);
             this.addComponent(cmpMesh);
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+        }
+        hasCollision(lineSegments) {
+            let hasCollision = false;
+            for (let lineSegment of lineSegments) {
+                let distance = lineSegment.distanceToPoint(new ƒ.Vector2(this.mtxLocal.translation.x, this.mtxLocal.translation.y));
+                if (distance <= this.radius / 2) {
+                    hasCollision = true;
+                }
+            }
+            return hasCollision;
+        }
+        update(_event) {
+            let travel = ƒ.Vector3.NORMALIZATION(this.speed, ƒ.Loop.timeFrameGame / 10000);
+            this.mtxLocal.translate(travel);
+            console.log(this.hasCollision(this.lineSegments));
         }
     }
     Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
@@ -160,28 +163,29 @@ var V1;
         constructor(_scale, _position) {
             super("Quad");
             this.position = _position;
-            this.init(_scale, _position);
+            this.scale = _scale;
+            this.init();
         }
         getLineSegments() {
             return this.lineSegments;
         }
-        init(_scale, _position) {
-            let a = new ƒ.Vector2(_position.x - (_scale / 2), _position.y + (_scale / 2));
-            let b = new ƒ.Vector2(_position.x + (_scale / 2), _position.y + (_scale / 2));
-            let c = new ƒ.Vector2(_position.x + (_scale / 2), _position.y - (_scale / 2));
-            let d = new ƒ.Vector2(_position.x - (_scale / 2), _position.y - (_scale / 2));
+        init() {
+            let a = new ƒ.Vector2(this.position.x - (this.scale / 2), this.position.y + (this.scale / 2));
+            let b = new ƒ.Vector2(this.position.x + (this.scale / 2), this.position.y + (this.scale / 2));
+            let c = new ƒ.Vector2(this.position.x + (this.scale / 2), this.position.y - (this.scale / 2));
+            let d = new ƒ.Vector2(this.position.x - (this.scale / 2), this.position.y - (this.scale / 2));
             this.lineSegments = new Array();
             this.lineSegments.push(new V1.LineSegment(a, b));
             this.lineSegments.push(new V1.LineSegment(b, c));
             this.lineSegments.push(new V1.LineSegment(c, d));
             this.lineSegments.push(new V1.LineSegment(d, a));
-            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(this.position)));
             let cmpMaterial = new ƒ.ComponentMaterial(ColliderQuad.material);
             cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
             this.addComponent(cmpMaterial);
             let cmpMesh = new ƒ.ComponentMesh(ColliderQuad.mesh);
             this.addComponent(cmpMesh);
-            cmpMesh.pivot.scale(ƒ.Vector3.ONE(_scale));
+            cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.scale));
         }
     }
     ColliderQuad.material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
