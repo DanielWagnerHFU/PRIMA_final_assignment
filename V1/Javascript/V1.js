@@ -168,18 +168,20 @@ var V1;
                 }
             }
             if (collisionEdges.length > 0) {
-                let vBefore = this.v;
+                console.log("COLLISION");
                 let n;
                 if (collisionEdges.length >= 2) {
                     if (collisionEdges[0].distanceToPoint(position) == collisionEdges[1].distanceToPoint(position)) {
-                        if (collisionEdges[0].a > collisionEdges[0].b) {
-                            n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position);
+                        console.log("CASE VERTEX");
+                        if (V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position)) > V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, position))) {
+                            n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, position);
                         }
                         else {
-                            n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, position);
+                            n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position);
                         }
                     }
                     else {
+                        console.log("CASE MULTIPLE EDGES");
                         let smallestDistance = Number.MAX_VALUE;
                         let finalCollisionEdge = collisionEdges[0];
                         for (let collisionEdge of collisionEdges) {
@@ -193,6 +195,7 @@ var V1;
                     }
                 }
                 else {
+                    console.log("CASE EDGE");
                     n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, collisionEdges[0].a));
                 }
                 n.normalize(1);
@@ -201,7 +204,7 @@ var V1;
                 v.subtract(n);
                 this.v.x = v.x * this.collisionDamping;
                 this.v.y = v.y * this.collisionDamping;
-                this.mtxLocal.translate(ƒ.Vector3.SCALE(vBefore, (ƒ.Loop.timeFrameReal / 1000)));
+                this.mtxLocal.translation = this.lastPosition;
             }
         }
         update(_event) {
@@ -209,6 +212,7 @@ var V1;
             this.updatePosition();
         }
         updatePosition() {
+            this.lastPosition = this.mtxLocal.translation;
             this.mtxLocal.translate(ƒ.Vector3.SCALE(this.v, ƒ.Loop.timeFrameReal / 1000));
             this.lineBallCollisionHandler(this.lineSegments);
         }
@@ -327,6 +331,15 @@ var V1;
     class VectorMathHelper {
         static distance(a) {
             return Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2));
+        }
+        static difference(a, b) {
+            let ax = a.x;
+            let ay = a.y;
+            let bx = b.x;
+            let by = b.y;
+            console.log(ax.toString() + bx.toString());
+            console.log(((bx) - (ax)).toString());
+            return new ƒ.Vector2((bx) - (ax), (by) - (ay));
         }
     }
     V1.VectorMathHelper = VectorMathHelper;

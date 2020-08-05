@@ -10,6 +10,7 @@ namespace V1 {
     private gravity: ƒ.Vector3 = new ƒ.Vector3(0, 0, 0);
     private collisionDamping: number;
     private lineSegments: LineSegment[];
+    private lastPosition: ƒ.Vector3;
 
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[]) {
       super("Ball");
@@ -41,16 +42,18 @@ namespace V1 {
       }
 
       if (collisionEdges.length > 0) {
-        let vBefore: ƒ.Vector3 = this.v;
+        console.log("COLLISION");
         let n: ƒ.Vector2;
         if (collisionEdges.length >= 2) {
           if (collisionEdges[0].distanceToPoint(position) == collisionEdges[1].distanceToPoint(position)) {
-            if (collisionEdges[0].a > collisionEdges[0].b) {
-              n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position);
-            } else {
+            console.log("CASE VERTEX");
+            if (VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position)) > VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, position))) {
               n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, position);
+            } else {
+              n = ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position);
             }
           } else {
+            console.log("CASE MULTIPLE EDGES");
             let smallestDistance: number = Number.MAX_VALUE;
             let finalCollisionEdge: LineSegment = collisionEdges[0];
             for (let collisionEdge of collisionEdges) {
@@ -63,6 +66,7 @@ namespace V1 {
             n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(finalCollisionEdge.b, finalCollisionEdge.a));
           }
         } else {
+          console.log("CASE EDGE");
           n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, collisionEdges[0].a));
         }
         n.normalize(1);
@@ -71,7 +75,7 @@ namespace V1 {
         v.subtract(n);
         this.v.x = v.x * this.collisionDamping;
         this.v.y = v.y * this.collisionDamping;
-        this.mtxLocal.translate(ƒ.Vector3.SCALE(vBefore, ( ƒ.Loop.timeFrameReal / 1000)));
+        this.mtxLocal.translation = this.lastPosition;
       }
     }
 
@@ -81,6 +85,7 @@ namespace V1 {
     }
 
     private updatePosition(): void {
+      this.lastPosition = this.mtxLocal.translation;
       this.mtxLocal.translate(ƒ.Vector3.SCALE(this.v, ƒ.Loop.timeFrameReal / 1000));
       this.lineBallCollisionHandler(this.lineSegments);
     }
