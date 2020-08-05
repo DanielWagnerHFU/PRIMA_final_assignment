@@ -35,8 +35,8 @@ var V1;
             super();
         }
         init() {
-            this.pivot.translate(new ƒ.Vector3(0, 0, 20));
-            this.pivot.lookAt(ƒ.Vector3.ZERO());
+            this.pivot.translate(new ƒ.Vector3(4, 4, 20));
+            this.pivot.lookAt(new ƒ.Vector3(4, 4, 0));
             this.backgroundColor = ƒ.Color.CSS("black");
         }
     }
@@ -47,11 +47,11 @@ var V1;
     class DefenseGame {
         init() {
             this.gametree = new V1.Gametree("gametree");
-            this.gametree.init();
             let camera = new V1.Camera();
             camera.init();
             this.gcanvas = new V1.GameCanvas();
             this.gcanvas.init(this.gametree, camera);
+            this.gametree.init(this.gcanvas);
             document.querySelector("body").appendChild(this.gcanvas);
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
         }
@@ -69,6 +69,9 @@ var V1;
     class GameCanvas extends HTMLCanvasElement {
         constructor() {
             super();
+        }
+        getViewport() {
+            return this.viewport;
         }
         init(graph, cmpCamera) {
             this.initViewport(graph, cmpCamera);
@@ -100,7 +103,7 @@ var V1;
         constructor(name) {
             super(name);
         }
-        init() {
+        init(gameCanvis) {
             // let material: ƒ.Material = new ƒ.Material("Projectile", ƒ.ShaderFlat, new ƒ.CoatColored());
             // let mesh: ƒ.MeshCube = new ƒ.MeshCube();
             // this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0))));
@@ -120,12 +123,16 @@ var V1;
             let linesegments4 = quad4.getLineSegments();
             linesegments = linesegments.concat(linesegments2, linesegments3, linesegments4);
             console.log(linesegments.length);
-            let ball = new V1.Ball(new ƒ.Vector3(0.4, 5, 0), 1, linesegments);
+            let ball1 = new V1.PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, linesegments, gameCanvis.getViewport());
+            let ball2 = new V1.Ball(new ƒ.Vector3(2, 4, 0), 1, linesegments);
+            let ball3 = new V1.Ball(new ƒ.Vector3(3.2, 6, 0), 1, linesegments);
             this.addChild(quad);
             this.addChild(quad2);
             this.addChild(quad3);
             this.addChild(quad4);
-            this.addChild(ball);
+            this.addChild(ball1);
+            this.addChild(ball2);
+            this.addChild(ball3);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
         }
     }
@@ -136,9 +143,11 @@ var V1;
     class Ball extends V1.GameObject {
         constructor(_position, _radius, _lineSegments) {
             super("Ball");
+            this.gravity = new ƒ.Vector3(0, 0, 0);
             this.radius = _radius;
-            this.v = new ƒ.Vector3(0.065, 0, 0);
-            this.a = new ƒ.Vector3(0, -3, 0);
+            this.v = new ƒ.Vector3(0, 0, 0);
+            this.a = this.gravity;
+            this.collisionDamping = 0.95;
             this.lineSegments = _lineSegments;
             this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
             let cmpMaterial = new ƒ.ComponentMaterial(Ball.material);
@@ -190,8 +199,8 @@ var V1;
                 let v = new ƒ.Vector2(this.v.x, this.v.y);
                 n.scale(2 * ƒ.Vector2.DOT(v, n));
                 v.subtract(n);
-                this.v.x = v.x;
-                this.v.y = v.y;
+                this.v.x = v.x * this.collisionDamping;
+                this.v.y = v.y * this.collisionDamping;
                 this.mtxLocal.translate(ƒ.Vector3.SCALE(vBefore, (ƒ.Loop.timeFrameReal / 1000)));
             }
         }
@@ -208,8 +217,29 @@ var V1;
         }
     }
     Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
-    Ball.mesh = new ƒ.MeshSphere(15, 15);
+    Ball.mesh = new ƒ.MeshSphere(12, 9);
     V1.Ball = Ball;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class PlayerBall extends V1.Ball {
+        constructor(_position, _radius, _lineSegments, _viewport) {
+            super(_position, _radius, _lineSegments);
+            this.viewport = _viewport;
+            this.init();
+        }
+        init() {
+            this.viewport.activatePointerEvent("\u0192pointermove" /* MOVE */, true);
+            this.viewport.addEventListener("\u0192pointermove" /* MOVE */, this.hndPointerMove.bind(this));
+        }
+        hndPointerMove(_event) {
+            this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
+            let pos = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
+            //console.log(ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation).toString());
+            this.a = ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation);
+        }
+    }
+    V1.PlayerBall = PlayerBall;
 })(V1 || (V1 = {}));
 var V1;
 (function (V1) {

@@ -1,18 +1,22 @@
 namespace V1 {
   export class Ball extends GameObject {
     private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
-    private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(15, 15);
+    private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(12, 9);
 
+    protected a: ƒ.Vector3;
+    
     private radius: number;
     private v: ƒ.Vector3;
-    private a: ƒ.Vector3;
+    private gravity: ƒ.Vector3 = new ƒ.Vector3(0, 0, 0);
+    private collisionDamping: number;
     private lineSegments: LineSegment[];
 
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[]) {
       super("Ball");
       this.radius = _radius;
-      this.v = new ƒ.Vector3(0.065, 0, 0);
-      this.a = new ƒ.Vector3(0, -3, 0);
+      this.v = new ƒ.Vector3(0, 0, 0);
+      this.a = this.gravity;
+      this.collisionDamping = 0.95;
       this.lineSegments = _lineSegments;
 
       this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
@@ -65,8 +69,8 @@ namespace V1 {
         let v: ƒ.Vector2 = new ƒ.Vector2(this.v.x, this.v.y);
         n.scale(2 * ƒ.Vector2.DOT(v, n));
         v.subtract(n);
-        this.v.x = v.x;
-        this.v.y = v.y;
+        this.v.x = v.x * this.collisionDamping;
+        this.v.y = v.y * this.collisionDamping;
         this.mtxLocal.translate(ƒ.Vector3.SCALE(vBefore, ( ƒ.Loop.timeFrameReal / 1000)));
       }
     }

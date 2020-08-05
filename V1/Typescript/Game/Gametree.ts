@@ -8,7 +8,7 @@ namespace V1 {
       super(name);
     }
 
-    public init(): void {
+    public init(gameCanvis: GameCanvas): void {
       // let material: ƒ.Material = new ƒ.Material("Projectile", ƒ.ShaderFlat, new ƒ.CoatColored());
       // let mesh: ƒ.MeshCube = new ƒ.MeshCube();
       // this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0))));
@@ -30,12 +30,16 @@ namespace V1 {
       let linesegments4: LineSegment[] = quad4.getLineSegments();
       linesegments = linesegments.concat(linesegments2, linesegments3, linesegments4);
       console.log(linesegments.length);
-      let ball: Ball = new Ball(new ƒ.Vector3(0.4, 5, 0), 1, linesegments);
+      let ball1: PlayerBall = new PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, linesegments, gameCanvis.getViewport());
+      let ball2: Ball = new Ball(new ƒ.Vector3(2, 4, 0), 1, linesegments);
+      let ball3: Ball = new Ball(new ƒ.Vector3(3.2, 6, 0), 1, linesegments);
       this.addChild(quad);
       this.addChild(quad2);
       this.addChild(quad3);
       this.addChild(quad4);
-      this.addChild(ball);
+      this.addChild(ball1);
+      this.addChild(ball2);
+      this.addChild(ball3);
       ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
     }
   }

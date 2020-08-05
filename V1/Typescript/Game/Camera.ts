@@ -5,8 +5,8 @@ namespace V1 {
     }
 
     public init(): void {
-      this.pivot.translate(new ƒ.Vector3(0, 0, 20));
-      this.pivot.lookAt(ƒ.Vector3.ZERO());
+      this.pivot.translate(new ƒ.Vector3(4, 4, 20));
+      this.pivot.lookAt(new ƒ.Vector3(4, 4, 0));
       this.backgroundColor = ƒ.Color.CSS("black");      
     }
   }

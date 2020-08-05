@@ -6,6 +6,10 @@ namespace V1 {
       super();
     }
 
+    public getViewport(): ƒ.Viewport {
+      return this.viewport;
+    }
+
     public init(graph: ƒ.Node, cmpCamera: ƒ.ComponentCamera): void {
       this.initViewport(graph, cmpCamera);
     }
