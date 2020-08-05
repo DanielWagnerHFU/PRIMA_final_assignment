@@ -21,14 +21,20 @@ namespace V1 {
       // this.addComponent(cmpMesh);
       // cmpMesh.pivot.scale(ƒ.Vector3.ONE(0.2));
       let quad: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(0, 0, 0));
-      let quad2: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(6, 0, 0));
+      let quad2: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(1.5, 0, 0));
+      let quad3: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(3, 0, 0));
+      let quad4: ColliderQuad = new ColliderQuad(1, new ƒ.Vector3(4.5, 0, 0));
       let linesegments: LineSegment[] = quad.getLineSegments();
       let linesegments2: LineSegment[] = quad2.getLineSegments();
-      linesegments = linesegments.concat(linesegments2);
+      let linesegments3: LineSegment[] = quad3.getLineSegments();
+      let linesegments4: LineSegment[] = quad4.getLineSegments();
+      linesegments = linesegments.concat(linesegments2, linesegments3, linesegments4);
       console.log(linesegments.length);
-      let ball: Ball = new Ball(new ƒ.Vector3(0.8, 5, 0), 1, linesegments);
+      let ball: Ball = new Ball(new ƒ.Vector3(0.4, 5, 0), 1, linesegments);
       this.addChild(quad);
       this.addChild(quad2);
+      this.addChild(quad3);
+      this.addChild(quad4);
       this.addChild(ball);
       ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
     }
