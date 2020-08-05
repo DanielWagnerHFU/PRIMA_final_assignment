@@ -111,8 +111,14 @@ var V1;
             // this.addComponent(cmpMesh);
             // cmpMesh.pivot.scale(ƒ.Vector3.ONE(0.2));
             let quad = new V1.ColliderQuad(1, new ƒ.Vector3(0, 0, 0));
-            let ball = new V1.Ball(new ƒ.Vector3(-2, 0, 0), 1, quad.getLineSegments());
+            let quad2 = new V1.ColliderQuad(1, new ƒ.Vector3(6, 0, 0));
+            let linesegments = quad.getLineSegments();
+            let linesegments2 = quad2.getLineSegments();
+            linesegments = linesegments.concat(linesegments2);
+            console.log(linesegments.length);
+            let ball = new V1.Ball(new ƒ.Vector3(0.8, 5, 0), 1, linesegments);
             this.addChild(quad);
+            this.addChild(quad2);
             this.addChild(ball);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
         }
@@ -125,8 +131,8 @@ var V1;
         constructor(_position, _radius, _lineSegments) {
             super("Ball");
             this.radius = _radius;
-            this.v = new ƒ.Vector3(0, -0.4, 0);
-            this.a = new ƒ.Vector3(1, 0, 0);
+            this.v = new ƒ.Vector3(0, 0, 0);
+            this.a = new ƒ.Vector3(0, -3, 0);
             this.lineSegments = _lineSegments;
             this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
             let cmpMaterial = new ƒ.ComponentMaterial(Ball.material);
@@ -138,13 +144,64 @@ var V1;
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
         }
         hasCollision(lineSegments) {
+            let smallestDistance = this.radius / 2;
+            let closestlineSegment = null;
+            let collsionsFound = 0;
+            let position = new ƒ.Vector2(this.mtxLocal.translation.x, this.mtxLocal.translation.y);
             for (let lineSegment of lineSegments) {
-                let distance = lineSegment.distanceToPoint(new ƒ.Vector2(this.mtxLocal.translation.x, this.mtxLocal.translation.y));
-                if (distance <= this.radius / 2) {
-                    return lineSegment;
+                let distance = lineSegment.distanceToPoint(position);
+                if (distance <= smallestDistance) {
+                    collsionsFound++;
+                    if (collsionsFound == 2) {
+                        let d11 = V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(closestlineSegment.a, position));
+                        let d12 = V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(closestlineSegment.b, position));
+                        let d21 = V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(lineSegment.a, position));
+                        let d22 = V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(lineSegment.b, position));
+                        // if ((d11 + d12) >= (d21 + d22)) {
+                        //   return lineSegment;
+                        // } else {
+                        //   return closestlineSegment;
+                        // }
+                    }
+                    smallestDistance = distance;
+                    closestlineSegment = lineSegment;
                 }
             }
-            return null;
+            return closestlineSegment;
+        }
+        lineBallCollisionHandler(lineSegments) {
+            let collisionEdges = new Array();
+            let position = new ƒ.Vector2(this.mtxLocal.translation.x, this.mtxLocal.translation.y);
+            for (let lineSegment of lineSegments) {
+                let distance = lineSegment.distanceToPoint(position);
+                if (distance <= this.radius / 2) {
+                    collisionEdges.push(lineSegment);
+                }
+            }
+            if (collisionEdges.length > 0) {
+                let vBefore = this.v;
+                let n;
+                if (collisionEdges.length == 1) {
+                    n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, collisionEdges[0].a));
+                }
+                else {
+                    let da = V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, position));
+                    let db = V1.VectorMathHelper.distance(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, position));
+                    if (da > db) {
+                        n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(collisionEdges[0].b, this.mtxLocal.translation.toVector2()));
+                    }
+                    else {
+                        n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(collisionEdges[0].a, this.mtxLocal.translation.toVector2()));
+                    }
+                }
+                n.normalize(1);
+                let v = new ƒ.Vector2(this.v.x, this.v.y);
+                n.scale(2 * ƒ.Vector2.DOT(v, n));
+                v.subtract(n);
+                this.v.x = v.x;
+                this.v.y = v.y;
+                this.mtxLocal.translate(ƒ.Vector3.SCALE(vBefore, (ƒ.Loop.timeFrameReal / 1000)));
+            }
         }
         update(_event) {
             this.updateSpeed();
@@ -152,14 +209,17 @@ var V1;
         }
         updatePosition() {
             this.mtxLocal.translate(ƒ.Vector3.SCALE(this.v, ƒ.Loop.timeFrameReal / 1000));
-            if (this.hasCollision(this.lineSegments) != null) {
-                this.handleCollision(this.hasCollision(this.lineSegments));
-            }
+            // let collsionEdge: LineSegment = this.hasCollision(this.lineSegments);
+            // if (collsionEdge != null) {
+            //   let vBefore: ƒ.Vector3 = this.v;
+            //   this.handleCollision(collsionEdge);
+            //   this.mtxLocal.translate(ƒ.Vector3.SCALE(vBefore, ( ƒ.Loop.timeFrameReal / 1000)));
+            // }
+            this.lineBallCollisionHandler(this.lineSegments);
         }
         handleCollision(lineSegment) {
             let n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(lineSegment.b, lineSegment.a));
             n.normalize(1);
-            console.log(n.toString());
             let v = new ƒ.Vector2(this.v.x, this.v.y);
             n.scale(2 * ƒ.Vector2.DOT(v, n));
             v.subtract(n);
@@ -171,7 +231,7 @@ var V1;
         }
     }
     Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
-    Ball.mesh = new ƒ.MeshSphere(20, 20);
+    Ball.mesh = new ƒ.MeshSphere(15, 15);
     V1.Ball = Ball;
 })(V1 || (V1 = {}));
 var V1;
@@ -258,6 +318,9 @@ var V1;
 var V1;
 (function (V1) {
     class VectorMathHelper {
+        static distance(a) {
+            return Math.sqrt(Math.pow(a.x, 2) + Math.pow(a.y, 2));
+        }
     }
     V1.VectorMathHelper = VectorMathHelper;
 })(V1 || (V1 = {}));
