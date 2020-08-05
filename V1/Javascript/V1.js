@@ -124,11 +124,11 @@ var V1;
     class Ball extends V1.GameObject {
         constructor(_position, _radius, _lineSegments) {
             super("Ball");
-            this.position = new ƒ.Vector2(_position.x, _position.y);
             this.radius = _radius;
-            this.speed = new ƒ.Vector3(1, 0, 0);
+            this.v = new ƒ.Vector3(0, -0.4, 0);
+            this.a = new ƒ.Vector3(1, 0, 0);
             this.lineSegments = _lineSegments;
-            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(_position.x, _position.y, _position.z))));
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
             let cmpMaterial = new ƒ.ComponentMaterial(Ball.material);
             cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
             this.addComponent(cmpMaterial);
@@ -138,19 +138,36 @@ var V1;
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
         }
         hasCollision(lineSegments) {
-            let hasCollision = false;
             for (let lineSegment of lineSegments) {
                 let distance = lineSegment.distanceToPoint(new ƒ.Vector2(this.mtxLocal.translation.x, this.mtxLocal.translation.y));
                 if (distance <= this.radius / 2) {
-                    hasCollision = true;
+                    return lineSegment;
                 }
             }
-            return hasCollision;
+            return null;
         }
         update(_event) {
-            let travel = ƒ.Vector3.NORMALIZATION(this.speed, ƒ.Loop.timeFrameGame / 10000);
-            this.mtxLocal.translate(travel);
-            console.log(this.hasCollision(this.lineSegments));
+            this.updateSpeed();
+            this.updatePosition();
+        }
+        updatePosition() {
+            this.mtxLocal.translate(ƒ.Vector3.SCALE(this.v, ƒ.Loop.timeFrameReal / 1000));
+            if (this.hasCollision(this.lineSegments) != null) {
+                this.handleCollision(this.hasCollision(this.lineSegments));
+            }
+        }
+        handleCollision(lineSegment) {
+            let n = ƒ.Vector2.ORTHOGONAL(ƒ.Vector2.DIFFERENCE(lineSegment.b, lineSegment.a));
+            n.normalize(1);
+            console.log(n.toString());
+            let v = new ƒ.Vector2(this.v.x, this.v.y);
+            n.scale(2 * ƒ.Vector2.DOT(v, n));
+            v.subtract(n);
+            this.v.x = v.x;
+            this.v.y = v.y;
+        }
+        updateSpeed() {
+            this.v = ƒ.Vector3.SUM(this.v, (ƒ.Vector3.SCALE(this.a, ƒ.Loop.timeFrameReal / 1000)));
         }
     }
     Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
@@ -237,5 +254,11 @@ var V1;
         }
     }
     V1.LineSegment = LineSegment;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class VectorMathHelper {
+    }
+    V1.VectorMathHelper = VectorMathHelper;
 })(V1 || (V1 = {}));
 //# sourceMappingURL=V1.js.map
