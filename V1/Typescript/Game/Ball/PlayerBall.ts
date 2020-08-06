@@ -18,8 +18,7 @@ namespace V1 {
     private hndPointerMove(_event: ƒ.EventPointer): void {
       this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
       let pos: ƒ.Vector3 = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
-      //console.log(ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation).toString());
-      this.a = ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation);
+      this.a = ƒ.Vector3.SUM(this.gravity, ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
     }
   }
 }

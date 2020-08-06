@@ -4,10 +4,9 @@ namespace V1 {
     private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(12, 9);
 
     protected a: ƒ.Vector3;
-    
+    protected gravity: ƒ.Vector3 = new ƒ.Vector3(0, -3.5, 0);
     private radius: number;
     private v: ƒ.Vector3;
-    private gravity: ƒ.Vector3 = new ƒ.Vector3(0, 0, 0);
     private collisionDamping: number;
     private lineSegments: LineSegment[];
     private lastPosition: ƒ.Vector3;

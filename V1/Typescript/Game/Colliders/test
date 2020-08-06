@@ -1,0 +1,20 @@
+00000011000000
+00011110000000
+00011110000000
+00000111000000
+00000000000000
+
+Gehe von oben nach unten und von links nach rechts durch alle matrix elemente
+  - Wenn eins gefunden dann:
+    -Füge Cube hinzu
+    -Checke alle 4 umgebenden Seiten
+      - Wenn Nicht in Matrix oder 0 Füge LineSegment hinzu
+
+Datenstruktur:
+FÜr Jede 1 wird ein Objekt erzeugt welches einen Cube darstellt und in einer gleichen Matrix gespeichert wird
+Für jedes dieser Objekte wird ermittelt welche der 4 Seiten "frei" sind und welche "unfrei"
+Der Status der freien Seiten wird auf "unhandled" gesetzt
+Für jedes Elemente wird für jede Seite geschaut ob diese "frei" und "unhandled" ist. 
+  Sollte dies der Fall sein so wird geschaut ob in den zur Seite orientiert benachbarten Elementen diese Seite auch "frei" und "unhandled" ist.
+  Das geschieht solange bis alle benachbarten Seiten gefunden wurden.
+  Dann wird ein entsprechendes LineSegment erzeugt. 

@@ -7,25 +7,6 @@ var V1;
         let game = new V1.DefenseGame();
         game.init();
         game.startLoop();
-        //testLineSegment1();
-        //testLineSegment2();
-    }
-    function testLineSegment1() {
-        let ls = new V1.LineSegment(new ƒ.Vector2(0, 0), new ƒ.Vector2(0, 10));
-        let distance = ls.distanceToPoint(new ƒ.Vector2(-1.5, -1));
-        let para = document.createElement("p");
-        let node = document.createTextNode(distance.toString());
-        para.appendChild(node);
-        document.body.appendChild(para);
-    }
-    function testLineSegment2() {
-        let ls1 = new V1.LineSegment(new ƒ.Vector2(-5, 0), new ƒ.Vector2(5, 0));
-        let ls2 = new V1.LineSegment(new ƒ.Vector2(-5, -2), new ƒ.Vector2(5, 1));
-        let ip = ls1.getIntersectionPoint(ls2);
-        let para = document.createElement("p");
-        let node = document.createTextNode(ip.toString());
-        para.appendChild(node);
-        document.body.appendChild(para);
     }
 })(V1 || (V1 = {}));
 var V1;
@@ -102,38 +83,23 @@ var V1;
     class Gametree extends V1.GameObject {
         constructor(name) {
             super(name);
+            this.lineSegments = new Array();
         }
         init(gameCanvis) {
-            // let material: ƒ.Material = new ƒ.Material("Projectile", ƒ.ShaderFlat, new ƒ.CoatColored());
-            // let mesh: ƒ.MeshCube = new ƒ.MeshCube();
-            // this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0))));
-            // let cmpMaterial: ƒ.ComponentMaterial = new ƒ.ComponentMaterial(material);
-            // cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
-            // this.addComponent(cmpMaterial);
-            // let cmpMesh: ƒ.ComponentMesh = new ƒ.ComponentMesh(mesh);
-            // this.addComponent(cmpMesh);
-            // cmpMesh.pivot.scale(ƒ.Vector3.ONE(0.2));
-            let quad = new V1.ColliderQuad(1, new ƒ.Vector3(0, 0, 0));
-            let quad2 = new V1.ColliderQuad(1, new ƒ.Vector3(1.5, 0, 0));
-            let quad3 = new V1.ColliderQuad(1, new ƒ.Vector3(3, 0, 0));
-            let quad4 = new V1.ColliderQuad(1, new ƒ.Vector3(4.5, 0, 0));
-            let linesegments = quad.getLineSegments();
-            let linesegments2 = quad2.getLineSegments();
-            let linesegments3 = quad3.getLineSegments();
-            let linesegments4 = quad4.getLineSegments();
-            linesegments = linesegments.concat(linesegments2, linesegments3, linesegments4);
-            console.log(linesegments.length);
-            let ball1 = new V1.PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, linesegments, gameCanvis.getViewport());
-            let ball2 = new V1.Ball(new ƒ.Vector3(2, 4, 0), 1, linesegments);
-            let ball3 = new V1.Ball(new ƒ.Vector3(3.2, 6, 0), 1, linesegments);
-            this.addChild(quad);
-            this.addChild(quad2);
-            this.addChild(quad3);
-            this.addChild(quad4);
-            this.addChild(ball1);
-            this.addChild(ball2);
-            this.addChild(ball3);
-            ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
+            // for (let i: number = -50; i < 50; i++) {
+            //   this.addChild(new ColliderQuad(1, new ƒ.Vector3(i, 0, 0), this.lineSegments));
+            // }
+            // this.addChild(new PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, this.lineSegments, gameCanvis.getViewport()));
+            // this.addChild(new Ball(new ƒ.Vector3(2, 4, 0), 1, this.lineSegments));
+            // this.addChild(new Ball(new ƒ.Vector3(4, 6, 0), 1, this.lineSegments));
+            // this.addChild(new Ball(new ƒ.Vector3(6, 6, 0), 1, this.lineSegments));
+            // this.addChild(new Ball(new ƒ.Vector3(-2, 6, 0), 1, this.lineSegments));
+            // this.addChild(new Ball(new ƒ.Vector3(-4, 6, 0), 1, this.lineSegments));
+            // this.addChild(new ColliderRectangle(new ƒ.Vector3(2, 1, 1), new ƒ.Vector3(0, 3, 0), this.lineSegments));
+            ƒAid.addStandardLightComponents(this, new ƒ.Color(0.9, 0.6, 0.6));
+        }
+        generateWorldFromMatrix(gameMatrix) {
+            //TODO
         }
     }
     V1.Gametree = Gametree;
@@ -143,7 +109,7 @@ var V1;
     class Ball extends V1.GameObject {
         constructor(_position, _radius, _lineSegments) {
             super("Ball");
-            this.gravity = new ƒ.Vector3(0, 0, 0);
+            this.gravity = new ƒ.Vector3(0, -3.5, 0);
             this.radius = _radius;
             this.v = new ƒ.Vector3(0, 0, 0);
             this.a = this.gravity;
@@ -239,8 +205,7 @@ var V1;
         hndPointerMove(_event) {
             this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
             let pos = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
-            //console.log(ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation).toString());
-            this.a = ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation);
+            this.a = ƒ.Vector3.SUM(this.gravity, ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
         }
     }
     V1.PlayerBall = PlayerBall;
@@ -248,21 +213,18 @@ var V1;
 var V1;
 (function (V1) {
     class ColliderQuad extends V1.GameObject {
-        constructor(_scale, _position) {
+        constructor(_scale, _position, _lineSegments) {
             super("Quad");
+            this.lineSegments = _lineSegments;
             this.position = _position;
             this.scale = _scale;
             this.init();
-        }
-        getLineSegments() {
-            return this.lineSegments;
         }
         init() {
             let a = new ƒ.Vector2(this.position.x - (this.scale / 2), this.position.y + (this.scale / 2));
             let b = new ƒ.Vector2(this.position.x + (this.scale / 2), this.position.y + (this.scale / 2));
             let c = new ƒ.Vector2(this.position.x + (this.scale / 2), this.position.y - (this.scale / 2));
             let d = new ƒ.Vector2(this.position.x - (this.scale / 2), this.position.y - (this.scale / 2));
-            this.lineSegments = new Array();
             this.lineSegments.push(new V1.LineSegment(a, b));
             this.lineSegments.push(new V1.LineSegment(b, c));
             this.lineSegments.push(new V1.LineSegment(c, d));
@@ -279,6 +241,62 @@ var V1;
     ColliderQuad.material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
     ColliderQuad.mesh = new ƒ.MeshCube();
     V1.ColliderQuad = ColliderQuad;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class ColliderRectangle extends V1.GameObject {
+        constructor(_scale, _position, _lineSegments) {
+            super("Rectangle");
+            this.lineSegments = _lineSegments;
+            this.position = _position;
+            this.scale = _scale;
+            this.init();
+        }
+        init() {
+            let a = new ƒ.Vector2(this.position.x - (this.scale.x / 2), this.position.y + (this.scale.y / 2));
+            let b = new ƒ.Vector2(this.position.x + (this.scale.x / 2), this.position.y + (this.scale.y / 2));
+            let c = new ƒ.Vector2(this.position.x + (this.scale.x / 2), this.position.y - (this.scale.y / 2));
+            let d = new ƒ.Vector2(this.position.x - (this.scale.x / 2), this.position.y - (this.scale.y / 2));
+            this.lineSegments.push(new V1.LineSegment(a, b));
+            this.lineSegments.push(new V1.LineSegment(b, c));
+            this.lineSegments.push(new V1.LineSegment(c, d));
+            this.lineSegments.push(new V1.LineSegment(d, a));
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(this.position)));
+            let cmpMaterial = new ƒ.ComponentMaterial(ColliderRectangle.material);
+            cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+            this.addComponent(cmpMaterial);
+            let cmpMesh = new ƒ.ComponentMesh(ColliderRectangle.mesh);
+            this.addComponent(cmpMesh);
+            cmpMesh.pivot.scale(this.scale);
+        }
+    }
+    ColliderRectangle.material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
+    ColliderRectangle.mesh = new ƒ.MeshCube();
+    V1.ColliderRectangle = ColliderRectangle;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class ColliderShape extends V1.GameObject {
+        constructor(gameMatrix, x, y) {
+            super("Shape");
+            this.scale = 1;
+            this.leftSideUnhandled = true;
+            this.topSideUnhandled = true;
+            this.rightSideUnhandled = true;
+            this.bottomSideUnhandled = true;
+            let position = new ƒ.Vector2(x, y);
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(0))));
+            let cmpMaterial = new ƒ.ComponentMaterial(ColliderShape.material);
+            cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+            this.addComponent(cmpMaterial);
+            let cmpMesh = new ƒ.ComponentMesh(ColliderShape.mesh);
+            this.addComponent(cmpMesh);
+            cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.scale));
+        }
+    }
+    ColliderShape.material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
+    ColliderShape.mesh = new ƒ.MeshCube();
+    V1.ColliderShape = ColliderShape;
 })(V1 || (V1 = {}));
 var V1;
 (function (V1) {

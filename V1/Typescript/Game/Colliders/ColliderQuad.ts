@@ -8,15 +8,12 @@ namespace V1 {
 
     private lineSegments: LineSegment[];
 
-    constructor(_scale: number, _position: ƒ.Vector3) {
+    constructor(_scale: number, _position: ƒ.Vector3, _lineSegments: LineSegment[]) {
       super("Quad");
+      this.lineSegments = _lineSegments;
       this.position = _position;
       this.scale = _scale;
       this.init();
-    }
-
-    public getLineSegments(): LineSegment[] {
-      return this.lineSegments;
     }
 
     private init(): void {
@@ -24,7 +21,6 @@ namespace V1 {
       let b: ƒ.Vector2 = new ƒ.Vector2(this.position.x + (this.scale / 2), this.position.y + (this.scale / 2));
       let c: ƒ.Vector2 = new ƒ.Vector2(this.position.x + (this.scale / 2), this.position.y - (this.scale / 2));
       let d: ƒ.Vector2 = new ƒ.Vector2(this.position.x - (this.scale / 2), this.position.y - (this.scale / 2));
-      this.lineSegments = new Array<LineSegment>();
       this.lineSegments.push(new LineSegment(a, b));
       this.lineSegments.push(new LineSegment(b, c));
       this.lineSegments.push(new LineSegment(c, d));
