@@ -11,18 +11,10 @@ namespace V1 {
     }
 
     private init(): void {
-      this.viewport.activatePointerEvent(ƒ.EVENT_POINTER.MOVE, true);
       this.viewport.activatePointerEvent(ƒ.EVENT_POINTER.DOWN, true);
       this.viewport.activatePointerEvent(ƒ.EVENT_POINTER.UP, true);
-      this.viewport.addEventListener(ƒ.EVENT_POINTER.MOVE, this.hndPointerMove.bind(this));
       this.viewport.addEventListener(ƒ.EVENT_POINTER.DOWN, this.hndPointerDOWN.bind(this));
       this.viewport.addEventListener(ƒ.EVENT_POINTER.UP, this.hndPointerUP.bind(this));
-    }
-
-    private hndPointerMove(_event: ƒ.EventPointer): void {
-      this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
-      let pos: ƒ.Vector3 = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
-      this.a = ƒ.Vector3.SUM(this.gravity, ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
     }
 
     private hndPointerDOWN(_event: ƒ.EventPointer): void {

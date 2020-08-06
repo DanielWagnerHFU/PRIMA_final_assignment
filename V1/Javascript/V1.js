@@ -101,16 +101,18 @@ var V1;
             let m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
                 [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
-                [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -259,40 +261,45 @@ var V1;
             this.hook = null;
         }
         hook(direction) {
-            let ip = this.hookIntersectionPoint(direction);
-            this.hookNode = new V1.GameObject("Hook"); //TODO GENERATE HOOK NODE
-            //this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(this.position)));
-            let cmpMaterial = new ƒ.ComponentMaterial(HookerBall.hookmaterial);
-            cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
-            this.hookNode.addComponent(cmpMaterial);
-            let cmpMesh = new ƒ.ComponentMesh(HookerBall.hookmesh);
-            this.hookNode.addComponent(cmpMesh);
-            cmpMesh.pivot.scale(ƒ.Vector3.ONE(1));
-            this.addChild(this.hookNode);
-            this.listener = this.updateHook.bind(this);
-            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
-            //TODO
-            //start with a normalized very short direction vector and make it longer until max - always looking for a line intersection
-            //If no intersection as found dont do anything
-            //If a intersection was found draw a rectangle from the body to the intersection point
-            //update this when the ball moves
-            //method: calculate new vector between position and intersectionpoint
-            //update the rectangle 
-            //also update a based on new vector
+            this.ip = this.hookIntersectionPoint(direction).toVector3();
+            if (this.ip != null) {
+                this.hookNode = new V1.GameObject("Hook"); //TODO GENERATE HOOK NODE
+                let cmpMaterial = new ƒ.ComponentMaterial(HookerBall.hookmaterial);
+                cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+                this.hookNode.addComponent(cmpMaterial);
+                let cmpMesh = new ƒ.ComponentMesh(HookerBall.hookmesh);
+                this.hookNode.addComponent(cmpMesh);
+                cmpMesh.pivot.scale(new ƒ.Vector3(1, 0.1, 0.1));
+                this.cmpMesh = cmpMesh.pivot;
+                this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0))));
+                this.addChild(this.hookNode);
+                this.listener = this.updateHook.bind(this);
+                ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
+            }
         }
         unhook() {
             ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
             this.removeChild(this.hookNode);
             this.hookNode = null;
+            this.a = this.gravity;
         }
         updateHook(_event) {
-            //TODO
+            let connectionVector = ƒ.Vector3.DIFFERENCE(this.ip, this.mtxLocal.translation);
+            let connectionVectorNormalized = ƒ.Vector3.NORMALIZATION(connectionVector, 1);
+            this.cmpMesh.scaling = new ƒ.Vector3(connectionVector.magnitude, 0.1, 0.1);
+            this.hookNode.mtxLocal.translation = ƒ.Vector3.SCALE(connectionVector, 0.5);
+            let cv = connectionVector.toVector2();
+            this.hookNode.mtxLocal.rotation = new ƒ.Vector3(0, 0, Math.atan2(cv.y, cv.x) * 180 / Math.PI);
+            connectionVector.scale(3.5);
+            this.a = ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector, this.gravity);
         }
         hookIntersectionPoint(direction) {
-            direction.normalize(0.05);
+            direction.normalize(0.03);
             let a = new V1.LineSegment(this.mtxLocal.translation.toVector2(), ƒ.Vector2.SUM(this.mtxLocal.translation.toVector2(), direction));
-            while (this.intersectionPoint(a) == null) {
+            let i = 0;
+            while (this.intersectionPoint(a) == null && i < 300) {
                 a.b.add(direction);
+                i++;
             }
             return this.intersectionPoint(a);
         }
@@ -319,17 +326,10 @@ var V1;
             this.init();
         }
         init() {
-            this.viewport.activatePointerEvent("\u0192pointermove" /* MOVE */, true);
             this.viewport.activatePointerEvent("\u0192pointerdown" /* DOWN */, true);
             this.viewport.activatePointerEvent("\u0192pointerup" /* UP */, true);
-            this.viewport.addEventListener("\u0192pointermove" /* MOVE */, this.hndPointerMove.bind(this));
             this.viewport.addEventListener("\u0192pointerdown" /* DOWN */, this.hndPointerDOWN.bind(this));
             this.viewport.addEventListener("\u0192pointerup" /* UP */, this.hndPointerUP.bind(this));
-        }
-        hndPointerMove(_event) {
-            this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
-            let pos = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
-            this.a = ƒ.Vector3.SUM(this.gravity, ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
         }
         hndPointerDOWN(_event) {
             this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));

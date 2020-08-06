@@ -5,6 +5,8 @@ namespace V1 {
 
     private listener: EventListener;
     private hookNode: GameObject;
+    private cmpMesh: ƒ.Matrix4x4;
+    private ip: ƒ.Vector3;
 
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[]) {
       super(_position, _radius, _lineSegments);
@@ -13,50 +15,52 @@ namespace V1 {
     }
 
     protected hook(direction: ƒ.Vector2): void {
-      let ip: ƒ.Vector2 = this.hookIntersectionPoint(direction);
-
-      this.hookNode = new GameObject("Hook"); //TODO GENERATE HOOK NODE
+      this.ip = this.hookIntersectionPoint(direction).toVector3();
+      if (this.ip != null) {
+        this.hookNode = new GameObject("Hook"); //TODO GENERATE HOOK NODE
       
-      //this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(this.position)));
+        let cmpMaterial: ƒ.ComponentMaterial = new ƒ.ComponentMaterial(HookerBall.hookmaterial);
+        cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+        this.hookNode.addComponent(cmpMaterial);
+  
+        let cmpMesh: ƒ.ComponentMesh = new ƒ.ComponentMesh(HookerBall.hookmesh);
+        this.hookNode.addComponent(cmpMesh);
+        cmpMesh.pivot.scale(new ƒ.Vector3(1, 0.1 , 0.1));
+        this.cmpMesh = cmpMesh.pivot;
 
-      let cmpMaterial: ƒ.ComponentMaterial = new ƒ.ComponentMaterial(HookerBall.hookmaterial);
-      cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
-      this.hookNode.addComponent(cmpMaterial);
+        this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0 , 0))));
 
-      let cmpMesh: ƒ.ComponentMesh = new ƒ.ComponentMesh(HookerBall.hookmesh);
-      this.hookNode.addComponent(cmpMesh);
-      cmpMesh.pivot.scale(ƒ.Vector3.ONE(1));
-
-      this.addChild(this.hookNode);
-      this.listener = this.updateHook.bind(this);
-      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.listener);
-
-      //TODO
-      //start with a normalized very short direction vector and make it longer until max - always looking for a line intersection
-      //If no intersection as found dont do anything
-      //If a intersection was found draw a rectangle from the body to the intersection point
-
-      //update this when the ball moves
-        //method: calculate new vector between position and intersectionpoint
-          //update the rectangle 
-          //also update a based on new vector
+        this.addChild(this.hookNode);
+        this.listener = this.updateHook.bind(this);
+        ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.listener);
+      }
     }
 
     protected unhook(): void {
       ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.listener);
       this.removeChild(this.hookNode);
       this.hookNode = null;
+      this.a = this.gravity;
     }
 
     private updateHook(_event: ƒ.Eventƒ): void {
-      //TODO
+      let connectionVector: ƒ.Vector3 = ƒ.Vector3.DIFFERENCE(this.ip, this.mtxLocal.translation);
+      let connectionVectorNormalized: ƒ.Vector3 = ƒ.Vector3.NORMALIZATION(connectionVector, 1);
+      this.cmpMesh.scaling = new ƒ.Vector3(connectionVector.magnitude, 0.1, 0.1);
+      this.hookNode.mtxLocal.translation = ƒ.Vector3.SCALE(connectionVector, 0.5);
+      let cv: ƒ.Vector2 = connectionVector.toVector2();
+      this.hookNode.mtxLocal.rotation = new ƒ.Vector3(0, 0, Math.atan2(cv.y, cv.x) * 180 / Math.PI);
+      connectionVector.scale(3.5);
+      this.a = ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector, this.gravity);
     }
 
     private hookIntersectionPoint(direction: ƒ.Vector2): ƒ.Vector2 {
-      direction.normalize(0.05);
+      direction.normalize(0.03);
       let a: LineSegment = new LineSegment(this.mtxLocal.translation.toVector2(), ƒ.Vector2.SUM(this.mtxLocal.translation.toVector2(), direction));
-      while (this.intersectionPoint(a) == null) {
+      let i: number = 0;
+      while (this.intersectionPoint(a) == null && i < 300) {
         a.b.add(direction);
+        i++;
       }
       return this.intersectionPoint(a);
     }
