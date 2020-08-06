@@ -96,10 +96,36 @@ var V1;
             // this.addChild(new Ball(new ƒ.Vector3(-2, 6, 0), 1, this.lineSegments));
             // this.addChild(new Ball(new ƒ.Vector3(-4, 6, 0), 1, this.lineSegments));
             // this.addChild(new ColliderRectangle(new ƒ.Vector3(2, 1, 1), new ƒ.Vector3(0, 3, 0), this.lineSegments));
+            let m = [[1, 1, 1, 1, 1],
+                [1, 1, 0, 1, 1],
+                [1, 1, 0, 1, 1],
+                [1, 1, 1, 1, 1]];
+            this.generateWorldFromMatrix(m);
+            this.generatePlayer(gameCanvis);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.9, 0.6, 0.6));
         }
         generateWorldFromMatrix(gameMatrix) {
-            //TODO
+            let shapeMatrix = [];
+            for (let x = 0; x < gameMatrix.length; x++) {
+                shapeMatrix[x] = [];
+                for (let y = 0; y < gameMatrix[0].length; y++) {
+                    if (gameMatrix[x][y] == 1) {
+                        shapeMatrix[x][y] = new V1.ColliderShape(shapeMatrix, x, y, this.lineSegments);
+                        this.addChild(shapeMatrix[x][y]);
+                    }
+                    else {
+                        shapeMatrix[x][y] = null;
+                    }
+                }
+            }
+            for (let x = 0; x < gameMatrix.length; x++) {
+                for (let y = 0; y < gameMatrix[0].length; y++) {
+                    shapeMatrix[x][y].setNeighbours();
+                }
+            }
+        }
+        generatePlayer(gameCanvis) {
+            this.addChild(new V1.PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, this.lineSegments, gameCanvis.getViewport()));
         }
     }
     V1.Gametree = Gametree;
@@ -277,13 +303,17 @@ var V1;
 var V1;
 (function (V1) {
     class ColliderShape extends V1.GameObject {
-        constructor(gameMatrix, x, y) {
+        constructor(_gameMatrix, x, y, _lineSegments) {
             super("Shape");
-            this.scale = 1;
             this.leftSideUnhandled = true;
             this.topSideUnhandled = true;
             this.rightSideUnhandled = true;
             this.bottomSideUnhandled = true;
+            this.scale = 1;
+            this.gameMatrix = _gameMatrix;
+            this.x = x;
+            this.y = y;
+            this.lineSegments = _lineSegments;
             let position = new ƒ.Vector2(x, y);
             this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(0))));
             let cmpMaterial = new ƒ.ComponentMaterial(ColliderShape.material);
@@ -292,6 +322,47 @@ var V1;
             let cmpMesh = new ƒ.ComponentMesh(ColliderShape.mesh);
             this.addComponent(cmpMesh);
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.scale));
+        }
+        generateLineSegments() {
+            if (this.topShape == null && this.topSideUnhandled) {
+                // Setze Handled //Schaue Links //Checke top
+                // Setze Handled //Schaue Rechts //Checke top
+            }
+            if (this.rightShape == null && this.rightSideUnhandled) {
+                //TODO
+            }
+            if (this.bottomShape == null && this.bottomSideUnhandled) {
+                //TODO
+            }
+            if (this.leftShape == null && this.leftSideUnhandled) {
+                //TODO
+            }
+        }
+        setNeighbours() {
+            if (this.x + 1 < this.gameMatrix.length) {
+                this.rightShape = this.gameMatrix[this.x + 1][this.y];
+            }
+            else {
+                this.rightShape = null;
+            }
+            if (this.x - 1 >= 0) {
+                this.leftShape = this.gameMatrix[this.x - 1][this.y];
+            }
+            else {
+                this.leftShape = null;
+            }
+            if (this.y + 1 < this.gameMatrix[0].length) {
+                this.topShape = this.gameMatrix[this.x][this.y + 1];
+            }
+            else {
+                this.topShape = null;
+            }
+            if (this.y - 1 >= 0) {
+                this.bottomShape = this.gameMatrix[this.x][this.y - 1];
+            }
+            else {
+                this.bottomShape = null;
+            }
         }
     }
     ColliderShape.material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
