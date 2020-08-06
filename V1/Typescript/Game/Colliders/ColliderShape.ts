@@ -42,17 +42,88 @@ namespace V1 {
 
     public generateLineSegments(): void {
       if (this.topShape == null && this.topSideUnhandled) {
-        // Setze Handled //Schaue Links //Checke top
-        // Setze Handled //Schaue Rechts //Checke top
+        this.topSideUnhandled = false;
+
+        let currentShape: ColliderShape = this;
+        let lengthRight: number = 0;
+        while (currentShape.rightShape != null && currentShape.rightShape.topShape == null) {
+          currentShape = currentShape.rightShape;
+          lengthRight = lengthRight + 1;
+          currentShape.topSideUnhandled = false;
+        }
+        currentShape = this;
+        let lengthLeft: number = 0;
+        while (currentShape.leftShape != null && currentShape.leftShape.topShape == null) {
+          currentShape = currentShape.rightShape;
+          lengthLeft = lengthLeft + 1;
+          currentShape.topSideUnhandled = false;
+        }
+        let a: ƒ.Vector2 = new ƒ.Vector2(this.x - (this.scale / 2) - lengthLeft, this.y + (this.scale / 2));
+        let b: ƒ.Vector2 = new ƒ.Vector2(this.x + (this.scale / 2) + lengthRight, this.y + (this.scale / 2));
+        this.lineSegments.push(new LineSegment(a, b));
       }
       if (this.rightShape == null && this.rightSideUnhandled) {
-        //TODO
+        this.rightSideUnhandled = false;
+
+        let currentShape: ColliderShape = this;
+        let lengthTop: number = 0;
+        while (currentShape.topShape != null && currentShape.topShape.rightShape == null) {
+          currentShape = currentShape.topShape;
+          lengthTop = lengthTop + 1;
+          currentShape.rightSideUnhandled = false;
+        }
+        currentShape = this;
+        let lengthBottom: number = 0;
+        while (currentShape.bottomShape != null && currentShape.bottomShape.rightShape == null) {
+          currentShape = currentShape.bottomShape;
+          lengthBottom = lengthBottom + 1;
+          currentShape.rightSideUnhandled = false;
+        }
+        let a: ƒ.Vector2 = new ƒ.Vector2(this.x + (this.scale / 2), this.y + (this.scale / 2) + lengthTop);
+        let b: ƒ.Vector2 = new ƒ.Vector2(this.x + (this.scale / 2), this.y - (this.scale / 2) - lengthBottom);
+        this.lineSegments.push(new LineSegment(a, b));
       }
       if (this.bottomShape == null && this.bottomSideUnhandled) {
-        //TODO
+        this.bottomSideUnhandled = false;
+
+        let currentShape: ColliderShape = this;
+        let lengthRight: number = 0;
+        while (currentShape.rightShape != null && currentShape.rightShape.bottomShape == null) {
+          currentShape = currentShape.rightShape;
+          lengthRight = lengthRight + 1;
+          currentShape.bottomSideUnhandled = false;
+        }
+        currentShape = this;
+        let lengthLeft: number = 0;
+        while (currentShape.leftShape != null && currentShape.leftShape.bottomShape == null) {
+          currentShape = currentShape.rightShape;
+          lengthLeft = lengthLeft + 1;
+          currentShape.bottomSideUnhandled = false;
+        }
+        let a: ƒ.Vector2 = new ƒ.Vector2(this.x - (this.scale / 2) - lengthLeft, this.y - (this.scale / 2));
+        let b: ƒ.Vector2 = new ƒ.Vector2(this.x + (this.scale / 2) + lengthRight, this.y - (this.scale / 2));
+        this.lineSegments.push(new LineSegment(a, b));
       }
       if (this.leftShape == null && this.leftSideUnhandled) {
-        //TODO
+        this.leftSideUnhandled = false;
+
+        let currentShape: ColliderShape = this;
+        let lengthTop: number = 0;
+        while (currentShape.topShape != null && currentShape.topShape.leftShape == null) {
+          currentShape = currentShape.topShape;
+          lengthTop = lengthTop + 1;
+          currentShape.leftSideUnhandled = false;
+        }
+        currentShape = this;
+        let lengthBottom: number = 0;
+        while (currentShape.bottomShape != null && currentShape.bottomShape.leftShape == null) {
+          currentShape = currentShape.bottomShape;
+          lengthBottom = lengthBottom + 1;
+          currentShape.leftSideUnhandled = false;
+        }
+        let a: ƒ.Vector2 = new ƒ.Vector2(this.x - (this.scale / 2), this.y + (this.scale / 2) + lengthTop);
+        let b: ƒ.Vector2 = new ƒ.Vector2(this.x - (this.scale / 2), this.y - (this.scale / 2) - lengthBottom);
+        this.lineSegments.push(new LineSegment(a, b));
       }
     }
 

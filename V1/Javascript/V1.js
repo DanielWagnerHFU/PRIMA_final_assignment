@@ -98,12 +98,25 @@ var V1;
             return this.player;
         }
         init(gameCanvis) {
-            let m = [[1, 1, 1, 1, 1],
-                [1, 1, 0, 1, 1],
-                [1, 1, 0, 1, 1],
-                [1, 1, 1, 1, 1]];
+            let m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
             this.generateWorldFromMatrix(m);
-            this.generatePlayer(gameCanvis);
+            this.generatePlayer(gameCanvis, m);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.9, 0.6, 0.6));
         }
         generateWorldFromMatrix(gameMatrix) {
@@ -127,10 +140,23 @@ var V1;
                     }
                 }
             }
+            for (let x = 0; x < gameMatrix.length; x++) {
+                for (let y = 0; y < gameMatrix[0].length; y++) {
+                    if (shapeMatrix[x][y] != null) {
+                        shapeMatrix[x][y].generateLineSegments();
+                    }
+                }
+            }
         }
-        generatePlayer(gameCanvis) {
-            this.player = new V1.PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, this.lineSegments, gameCanvis.getViewport());
-            this.addChild(this.player);
+        generatePlayer(gameCanvis, gameMatrix) {
+            for (let x = 0; x < gameMatrix.length; x++) {
+                for (let y = 0; y < gameMatrix[0].length; y++) {
+                    if (gameMatrix[x][y] == 2) {
+                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 1, this.lineSegments, gameCanvis.getViewport());
+                        this.addChild(this.player);
+                    }
+                }
+            }
         }
     }
     V1.Gametree = Gametree;
@@ -333,17 +359,84 @@ var V1;
         }
         generateLineSegments() {
             if (this.topShape == null && this.topSideUnhandled) {
-                // Setze Handled //Schaue Links //Checke top
-                // Setze Handled //Schaue Rechts //Checke top
+                this.topSideUnhandled = false;
+                let currentShape = this;
+                let lengthRight = 0;
+                while (currentShape.rightShape != null && currentShape.rightShape.topShape == null) {
+                    currentShape = currentShape.rightShape;
+                    lengthRight = lengthRight + 1;
+                    currentShape.topSideUnhandled = false;
+                }
+                currentShape = this;
+                let lengthLeft = 0;
+                while (currentShape.leftShape != null && currentShape.leftShape.topShape == null) {
+                    currentShape = currentShape.rightShape;
+                    lengthLeft = lengthLeft + 1;
+                    currentShape.topSideUnhandled = false;
+                }
+                let a = new ƒ.Vector2(this.x - (this.scale / 2) - lengthLeft, this.y + (this.scale / 2));
+                let b = new ƒ.Vector2(this.x + (this.scale / 2) + lengthRight, this.y + (this.scale / 2));
+                this.lineSegments.push(new V1.LineSegment(a, b));
             }
             if (this.rightShape == null && this.rightSideUnhandled) {
-                //TODO
+                this.rightSideUnhandled = false;
+                let currentShape = this;
+                let lengthTop = 0;
+                while (currentShape.topShape != null && currentShape.topShape.rightShape == null) {
+                    currentShape = currentShape.topShape;
+                    lengthTop = lengthTop + 1;
+                    currentShape.rightSideUnhandled = false;
+                }
+                currentShape = this;
+                let lengthBottom = 0;
+                while (currentShape.bottomShape != null && currentShape.bottomShape.rightShape == null) {
+                    currentShape = currentShape.bottomShape;
+                    lengthBottom = lengthBottom + 1;
+                    currentShape.rightSideUnhandled = false;
+                }
+                let a = new ƒ.Vector2(this.x + (this.scale / 2), this.y + (this.scale / 2) + lengthTop);
+                let b = new ƒ.Vector2(this.x + (this.scale / 2), this.y - (this.scale / 2) - lengthBottom);
+                this.lineSegments.push(new V1.LineSegment(a, b));
             }
             if (this.bottomShape == null && this.bottomSideUnhandled) {
-                //TODO
+                this.bottomSideUnhandled = false;
+                let currentShape = this;
+                let lengthRight = 0;
+                while (currentShape.rightShape != null && currentShape.rightShape.bottomShape == null) {
+                    currentShape = currentShape.rightShape;
+                    lengthRight = lengthRight + 1;
+                    currentShape.bottomSideUnhandled = false;
+                }
+                currentShape = this;
+                let lengthLeft = 0;
+                while (currentShape.leftShape != null && currentShape.leftShape.bottomShape == null) {
+                    currentShape = currentShape.rightShape;
+                    lengthLeft = lengthLeft + 1;
+                    currentShape.bottomSideUnhandled = false;
+                }
+                let a = new ƒ.Vector2(this.x - (this.scale / 2) - lengthLeft, this.y - (this.scale / 2));
+                let b = new ƒ.Vector2(this.x + (this.scale / 2) + lengthRight, this.y - (this.scale / 2));
+                this.lineSegments.push(new V1.LineSegment(a, b));
             }
             if (this.leftShape == null && this.leftSideUnhandled) {
-                //TODO
+                this.leftSideUnhandled = false;
+                let currentShape = this;
+                let lengthTop = 0;
+                while (currentShape.topShape != null && currentShape.topShape.leftShape == null) {
+                    currentShape = currentShape.topShape;
+                    lengthTop = lengthTop + 1;
+                    currentShape.leftSideUnhandled = false;
+                }
+                currentShape = this;
+                let lengthBottom = 0;
+                while (currentShape.bottomShape != null && currentShape.bottomShape.leftShape == null) {
+                    currentShape = currentShape.bottomShape;
+                    lengthBottom = lengthBottom + 1;
+                    currentShape.leftSideUnhandled = false;
+                }
+                let a = new ƒ.Vector2(this.x - (this.scale / 2), this.y + (this.scale / 2) + lengthTop);
+                let b = new ƒ.Vector2(this.x - (this.scale / 2), this.y - (this.scale / 2) - lengthBottom);
+                this.lineSegments.push(new V1.LineSegment(a, b));
             }
         }
         setNeighbours() {
