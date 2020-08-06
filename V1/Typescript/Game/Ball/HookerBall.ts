@@ -1,6 +1,6 @@
 namespace V1 {
   export class HookerBall extends Ball {
-    private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored());
+    private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.6, 0.4, 1)));
     private static hookmesh: ƒ.MeshCube = new ƒ.MeshCube();
 
     private listener: EventListener;
@@ -31,6 +31,7 @@ namespace V1 {
         this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0 , 0))));
 
         this.addChild(this.hookNode);
+        this.updateHook(null);
         this.listener = this.updateHook.bind(this);
         ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.listener);
       }
@@ -50,19 +51,20 @@ namespace V1 {
       this.hookNode.mtxLocal.translation = ƒ.Vector3.SCALE(connectionVector, 0.5);
       let cv: ƒ.Vector2 = connectionVector.toVector2();
       this.hookNode.mtxLocal.rotation = new ƒ.Vector3(0, 0, Math.atan2(cv.y, cv.x) * 180 / Math.PI);
-      connectionVector.scale(3.5);
+      connectionVector.scale(2.0);
+      connectionVectorNormalized.scale(3);
       this.a = ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector, this.gravity);
     }
 
     private hookIntersectionPoint(direction: ƒ.Vector2): ƒ.Vector2 {
-      direction.normalize(0.03);
+      direction.normalize(0.01);
       let a: LineSegment = new LineSegment(this.mtxLocal.translation.toVector2(), ƒ.Vector2.SUM(this.mtxLocal.translation.toVector2(), direction));
       let i: number = 0;
-      while (this.intersectionPoint(a) == null && i < 300) {
+      while (this.intersectionPoint(a) == null && i < 750) {
         a.b.add(direction);
         i++;
       }
-      return this.intersectionPoint(a);
+      return ƒ.Vector2.SUM(this.intersectionPoint(a), ƒ.Vector2.SCALE(direction , 5));
     }
 
     private intersectionPoint(a: LineSegment): ƒ.Vector2 {

@@ -77,7 +77,7 @@ namespace V1 {
       for (let x: number = 0; x < gameMatrix.length; x++) {
         for (let y: number = 0; y < gameMatrix[0].length; y++) {
           if (gameMatrix[x][y] == 2) {
-            this.player = new PlayerBall(new ƒ.Vector3(x, y, 0), 1, this.lineSegments, gameCanvis.getViewport());
+            this.player = new PlayerBall(new ƒ.Vector3(x, y, 0), 0.8, this.lineSegments, gameCanvis.getViewport());
             this.addChild(this.player);
           }
         }
