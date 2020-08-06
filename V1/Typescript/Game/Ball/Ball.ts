@@ -1,14 +1,14 @@
 namespace V1 {
   export class Ball extends GameObject {
-    private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
+    private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.2, 0.2, 1)));
     private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(12, 9);
 
     protected a: ƒ.Vector3;
     protected gravity: ƒ.Vector3 = new ƒ.Vector3(0, -3.5, 0);
+    protected lineSegments: LineSegment[];
     private radius: number;
     private v: ƒ.Vector3;
     private collisionDamping: number;
-    private lineSegments: LineSegment[];
     private lastPosition: ƒ.Vector3;
 
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[]) {

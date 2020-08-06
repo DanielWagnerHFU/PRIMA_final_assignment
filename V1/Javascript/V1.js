@@ -246,13 +246,73 @@ var V1;
             this.v = ƒ.Vector3.SUM(this.v, (ƒ.Vector3.SCALE(this.a, ƒ.Loop.timeFrameReal / 1000)));
         }
     }
-    Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored());
+    Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.2, 0.2, 1)));
     Ball.mesh = new ƒ.MeshSphere(12, 9);
     V1.Ball = Ball;
 })(V1 || (V1 = {}));
 var V1;
 (function (V1) {
-    class PlayerBall extends V1.Ball {
+    class HookerBall extends V1.Ball {
+        constructor(_position, _radius, _lineSegments) {
+            super(_position, _radius, _lineSegments);
+            this.listener = null;
+            this.hook = null;
+        }
+        hook(direction) {
+            let ip = this.hookIntersectionPoint(direction);
+            this.hookNode = new V1.GameObject("Hook"); //TODO GENERATE HOOK NODE
+            //this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(this.position)));
+            let cmpMaterial = new ƒ.ComponentMaterial(HookerBall.hookmaterial);
+            cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+            this.hookNode.addComponent(cmpMaterial);
+            let cmpMesh = new ƒ.ComponentMesh(HookerBall.hookmesh);
+            this.hookNode.addComponent(cmpMesh);
+            cmpMesh.pivot.scale(ƒ.Vector3.ONE(1));
+            this.addChild(this.hookNode);
+            this.listener = this.updateHook.bind(this);
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
+            //TODO
+            //start with a normalized very short direction vector and make it longer until max - always looking for a line intersection
+            //If no intersection as found dont do anything
+            //If a intersection was found draw a rectangle from the body to the intersection point
+            //update this when the ball moves
+            //method: calculate new vector between position and intersectionpoint
+            //update the rectangle 
+            //also update a based on new vector
+        }
+        unhook() {
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
+            this.removeChild(this.hookNode);
+            this.hookNode = null;
+        }
+        updateHook(_event) {
+            //TODO
+        }
+        hookIntersectionPoint(direction) {
+            direction.normalize(0.05);
+            let a = new V1.LineSegment(this.mtxLocal.translation.toVector2(), ƒ.Vector2.SUM(this.mtxLocal.translation.toVector2(), direction));
+            while (this.intersectionPoint(a) == null) {
+                a.b.add(direction);
+            }
+            return this.intersectionPoint(a);
+        }
+        intersectionPoint(a) {
+            let ip = null;
+            for (let b of this.lineSegments) {
+                if (b.getIntersectionPoint(a) != null) {
+                    ip = b.getIntersectionPoint(a);
+                }
+            }
+            return ip;
+        }
+    }
+    HookerBall.hookmaterial = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored());
+    HookerBall.hookmesh = new ƒ.MeshCube();
+    V1.HookerBall = HookerBall;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class PlayerBall extends V1.HookerBall {
         constructor(_position, _radius, _lineSegments, _viewport) {
             super(_position, _radius, _lineSegments);
             this.viewport = _viewport;
@@ -260,12 +320,26 @@ var V1;
         }
         init() {
             this.viewport.activatePointerEvent("\u0192pointermove" /* MOVE */, true);
+            this.viewport.activatePointerEvent("\u0192pointerdown" /* DOWN */, true);
+            this.viewport.activatePointerEvent("\u0192pointerup" /* UP */, true);
             this.viewport.addEventListener("\u0192pointermove" /* MOVE */, this.hndPointerMove.bind(this));
+            this.viewport.addEventListener("\u0192pointerdown" /* DOWN */, this.hndPointerDOWN.bind(this));
+            this.viewport.addEventListener("\u0192pointerup" /* UP */, this.hndPointerUP.bind(this));
         }
         hndPointerMove(_event) {
             this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
             let pos = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
             this.a = ƒ.Vector3.SUM(this.gravity, ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
+        }
+        hndPointerDOWN(_event) {
+            this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));
+            let pos = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
+            let direction = ƒ.Vector3.SUM(ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
+            super.hook(direction.toVector2());
+            //THROW HOOK
+        }
+        hndPointerUP(_event) {
+            super.unhook();
         }
     }
     V1.PlayerBall = PlayerBall;
