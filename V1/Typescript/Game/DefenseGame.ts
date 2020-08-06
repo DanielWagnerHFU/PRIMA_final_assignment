@@ -9,12 +9,12 @@ namespace V1 {
       this.gametree = new Gametree("gametree");
 
       let camera: Camera = new Camera();
-      camera.init();
 
       this.gcanvas = new GameCanvas();
       this.gcanvas.init(this.gametree, camera);
 
       this.gametree.init(this.gcanvas);
+      camera.init(this.gametree.getPlayer());
       
       document.querySelector("body").appendChild(this.gcanvas);
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));

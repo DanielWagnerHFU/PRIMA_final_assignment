@@ -30,6 +30,10 @@ namespace V1 {
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));
     }
 
+    public getPosition(): ƒ.Vector3 {
+      return this.mtxLocal.translation;
+    }
+
     public lineBallCollisionHandler(lineSegments: LineSegment[]): void {
       let collisionEdges: LineSegment[] = new Array<LineSegment>();
       let position: ƒ.Vector2 = new ƒ.Vector2(this.mtxLocal.translation.x, this.mtxLocal.translation.y);

@@ -15,10 +15,19 @@ var V1;
         constructor() {
             super();
         }
-        init() {
+        init(_player) {
+            this.player = _player;
             this.pivot.translate(new ƒ.Vector3(4, 4, 20));
             this.pivot.lookAt(new ƒ.Vector3(4, 4, 0));
             this.backgroundColor = ƒ.Color.CSS("black");
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+        }
+        update(_event) {
+            this.updatePosition(this.player.getPosition());
+        }
+        updatePosition(lookAt) {
+            this.pivot.translation = (ƒ.Vector3.SUM(lookAt, new ƒ.Vector3(0, 0, -20)));
+            this.pivot.lookAt(lookAt);
         }
     }
     V1.Camera = Camera;
@@ -29,10 +38,10 @@ var V1;
         init() {
             this.gametree = new V1.Gametree("gametree");
             let camera = new V1.Camera();
-            camera.init();
             this.gcanvas = new V1.GameCanvas();
             this.gcanvas.init(this.gametree, camera);
             this.gametree.init(this.gcanvas);
+            camera.init(this.gametree.getPlayer());
             document.querySelector("body").appendChild(this.gcanvas);
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
         }
@@ -85,17 +94,10 @@ var V1;
             super(name);
             this.lineSegments = new Array();
         }
+        getPlayer() {
+            return this.player;
+        }
         init(gameCanvis) {
-            // for (let i: number = -50; i < 50; i++) {
-            //   this.addChild(new ColliderQuad(1, new ƒ.Vector3(i, 0, 0), this.lineSegments));
-            // }
-            // this.addChild(new PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, this.lineSegments, gameCanvis.getViewport()));
-            // this.addChild(new Ball(new ƒ.Vector3(2, 4, 0), 1, this.lineSegments));
-            // this.addChild(new Ball(new ƒ.Vector3(4, 6, 0), 1, this.lineSegments));
-            // this.addChild(new Ball(new ƒ.Vector3(6, 6, 0), 1, this.lineSegments));
-            // this.addChild(new Ball(new ƒ.Vector3(-2, 6, 0), 1, this.lineSegments));
-            // this.addChild(new Ball(new ƒ.Vector3(-4, 6, 0), 1, this.lineSegments));
-            // this.addChild(new ColliderRectangle(new ƒ.Vector3(2, 1, 1), new ƒ.Vector3(0, 3, 0), this.lineSegments));
             let m = [[1, 1, 1, 1, 1],
                 [1, 1, 0, 1, 1],
                 [1, 1, 0, 1, 1],
@@ -120,12 +122,15 @@ var V1;
             }
             for (let x = 0; x < gameMatrix.length; x++) {
                 for (let y = 0; y < gameMatrix[0].length; y++) {
-                    shapeMatrix[x][y].setNeighbours();
+                    if (shapeMatrix[x][y] != null) {
+                        shapeMatrix[x][y].setNeighbours();
+                    }
                 }
             }
         }
         generatePlayer(gameCanvis) {
-            this.addChild(new V1.PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, this.lineSegments, gameCanvis.getViewport()));
+            this.player = new V1.PlayerBall(new ƒ.Vector3(0.4, 5, 0), 1, this.lineSegments, gameCanvis.getViewport());
+            this.addChild(this.player);
         }
     }
     V1.Gametree = Gametree;
@@ -149,6 +154,9 @@ var V1;
             this.addComponent(cmpMesh);
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+        }
+        getPosition() {
+            return this.mtxLocal.translation;
         }
         lineBallCollisionHandler(lineSegments) {
             let collisionEdges = new Array();
