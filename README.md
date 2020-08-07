@@ -1,4 +1,4 @@
-# Prima
+# Hooker
 Repository for the final assignment in "Prototyping interactive media-applications and games" at Furtwangen University
 
 [Pages-Version](https://danielwagnerhfu.github.io/PRIMA_final_assignment/)
@@ -10,17 +10,17 @@ Repository for the final assignment in "Prototyping interactive media-applicatio
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|    | Titel                 |
-|    | Name                  |
-|    | Matrikelnummer        |
-|  1 | Nutzerinteraktion     | Der Nutzer kann mit der Applikation interagieren. Mit welchen Mitteln und welchen Aktionen werden welche Reaktionen ausgelöst?                                                                                                                                                 |
-|  2 | Objektinteraktion     | Mit Hilfe von Kollisionsprüfung interagieren Objekte miteinander. Wann passiert dabei wie was?                                                                                                                                                                                 |
-|  3 | Objektanzahl variabel | Eine variable Anzahl von Objekten wird zur Laufzeit generiert. Welche sind dies und wann und wie geschieht die Erzeugung?                                                                                                                                                      |
-|  4 | Szenenhierarchie      | Die Szenenhierarchie ist sinnvoll aufgebaut. Wer ist wessen Parent, wie sind Elemente in anderen gruppiert und warum?                                                                                                                                                          |
-|  5 | Sound                 | Sounds sind eingebunden und unterstützen oder ermöglichen die Wahrnehmung der Aktionen. Welche Ereignisse werden durch Geräusche akustisch unterstützt, und durch welche Geräuschkulisse oder Musik die Atmosphäre?                                                            |
-|  6 | GUI                   | Ein grafisches Interface gibt dem Nutzer die Möglichkeit, Einstellungen beim Programmstart oder während des Programmlaufs vorzunehmen. Was kann er dort tun?                                                                                   |
-|  7 | Externe Daten         | Spielparameter sind extern in einer Datei veränderbar, so dass das Spiel nur neu gestartet, aber nicht neu kompiliert werden muss. Welche Parameter sind dies und was sind die Auswirkungen?                                                                                   |
-|  8 | Verhaltensklassen     | Das Verhalten von Objekten ist in den Methoden von Klassen definiert, die in externen Dateien abgelegt sind. Welche Klassen sind dies und welches Verhalten wird dort beschrieben?                                                                                             |
-|  9 | Subklassen            | Es existiert eine Klassenhierarchie, einige Objekte sind Instanzen von einer oder mehreren abgeleiteten Subklassen mit gegenüber den anderen Objekten speziellem Verhalten und besonderen Eigenschaften. Welche Klassen sind dies und welches Verhalten wird dort beschrieben? |
-| 10 | Maße & Positionen     | Maße, Skala und Positionen sind gut durchdacht. Wie groß sind Spielfiguren, wie ist die Welt angeordnet bezogen auf den Ursprung, wie sind Spielelemente bezogen auf ihre lokalen Koordinatensysteme definiert?                                                                |
-| 11 | Event-System          | Das Event-System wird verwendet. Wer sendet wem Informationen oder Methodenaufrufe und wofür?                                                                                                                                                                                  |
+|    | Titel                 | Hooker
+|    | Name                  | Daniel Wagner
+|    | Matrikelnummer        | 259256
+|  1 | Nutzerinteraktion     | Es steht nur die die Interaktion durch Rechts bzw. Linksclick zur verfügung. Damit wird ein Haken ausgeworfen |
+|  2 | Objektinteraktion     | Jeder Ball kann mit den starren Körpern kollidieren und stößt daran ab. Sowohl im Fall Ball stößt auf Gerade, sowie auch im Fall Ball stößt auf Ecke. Außerdem wird die Kollision zwischen dem Ziel und dem Player ermittelt und führt zum Ende des Spiels. Eine unterschreitung des Limits führt zum Ende durch Tod                                                                                                                                                                                 |
+|  3 | Objektanzahl variabel | Die Zahl der Objekte ist abhängig von der gamematrix.json in welcher das Level konfiguriert werden kann                                                                                                                                                     |
+|  4 | Szenenhierarchie      | Hier ist es recht simpel. Abgesehen vom Haken befinden sich alle Elemente auf der selben Ebene. Der Haken ist Kind des HookerBall                                                                                                                                                      |
+|  5 | Sound                 | Hintergrundmusik ist vorhanden, genauso wie ein Sound bei Kollision                                                       |
+|  6 | GUI                   | -                                                                           |
+|  7 | Externe Daten         | Das Spiel kann in der Datei gamematrix.json frei konfiguriert werden. Dabei ist das Level als zweidimensionales Zahlenarray zu verstehen. Eine 0 steht für Luft, eine 1 für ein festes Objekt, eine 2 für den Spieler (darf nur einmal vorkommen) und eine 3 für das Ziel.                                                                                |
+|  8 | Verhaltensklassen     | -                                                                                        |
+|  9 | Subklassen            | Siehe Classdiagramm 
+| 10 | Maße & Positionen     | Maße, Skala und Positionen sind gut durchdacht. Jeder Cube hat die größe 1 und jeder Ball die größe 0.8; Somit passt ein Ball immer durch eine Lücke                                                          |
+| 11 | Event-System          | -                                                                                                                                                                                |
