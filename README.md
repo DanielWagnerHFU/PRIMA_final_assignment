@@ -3,10 +3,12 @@ Repository for the final assignment in "Prototyping interactive media-applicatio
 
 [Pages-Version](https://danielwagnerhfu.github.io/PRIMA_final_assignment/)
 
-- [Hooker](https://danielwagnerhfu.github.io/PRIMA_final_assignment/V1/Main.html)
+- [PONG](https://jirkadelloro.github.io/Prima/W19/L06_PongFinal/Main.html)
+- [CRAFTRIS](https://jirkadelloro.github.io/Prima/W19/L13_Craftris)
 
 
 ## Checkliste für Leistungsnachweis
+© Prof. Dipl.-Ing. Jirka R. Dell'Oro-Friedl, HFU
 
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
