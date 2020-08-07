@@ -2,12 +2,12 @@
 var V1;
 (function (V1) {
     V1.globalMatrix = null;
-    window.addEventListener("load", main);
+    window.addEventListener("load", acceptSounds);
     window.addEventListener("contextmenu", e => {
         e.preventDefault();
     });
     ƒ.RenderManager.initialize(true);
-    async function main(_event) {
+    async function main() {
         try {
             await load("/PRIMA_final_assignment/V1/Json/gamematrix.json");
         }
@@ -17,6 +17,16 @@ var V1;
         let game = new V1.DefenseGame();
         game.init();
         game.startLoop();
+    }
+    async function acceptSounds(_event) {
+        var button = document.createElement("button");
+        button.innerHTML = "Accept Sound";
+        document.querySelector("body").appendChild(button);
+        button.addEventListener("click", function () {
+            V1.Sound.init();
+            V1.Sound.playMusic();
+            main();
+        });
     }
     async function load(_filename) {
         let response = await fetch(_filename);
@@ -224,6 +234,31 @@ var V1;
         }
     }
     V1.Gametree = Gametree;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class Sound {
+        static init() {
+            let audioElements = document.querySelectorAll("audio");
+            for (let element of audioElements)
+                Sound.sounds[element.id] = element;
+        }
+        static play(_id) {
+            Sound.sounds[_id].volume = 0.5;
+            Sound.sounds[_id].play();
+        }
+        static playMusic() {
+            Sound.sounds["gameMusic"].loop = true;
+            Sound.sounds["gameMusic"].volume = 1;
+            Sound.sounds["gameMusic"].play();
+            console.log("music on");
+        }
+        static stopMusic() {
+            Sound.sounds["gameMusic"].muted = true;
+        }
+    }
+    Sound.sounds = {};
+    V1.Sound = Sound;
 })(V1 || (V1 = {}));
 var V1;
 (function (V1) {
