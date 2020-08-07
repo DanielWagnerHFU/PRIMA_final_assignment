@@ -30,6 +30,7 @@ namespace V1 {
     button.addEventListener ("click", function(): void {
       Sound.init();
       Sound.playMusic();
+      document.querySelector("body").removeChild(button);
       main();
     });
   }

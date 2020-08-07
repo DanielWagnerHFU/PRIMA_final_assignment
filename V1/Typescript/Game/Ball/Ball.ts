@@ -59,6 +59,7 @@ namespace V1 {
 
       if (collisionEdges.length > 0) {
         console.log("COLLISION");
+        Sound.play("impact");
         let n: ƒ.Vector2;
         if (collisionEdges.length >= 2) {
           if (collisionEdges[0].distanceToPoint(position) == collisionEdges[1].distanceToPoint(position)) {

@@ -25,6 +25,7 @@ var V1;
         button.addEventListener("click", function () {
             V1.Sound.init();
             V1.Sound.playMusic();
+            document.querySelector("body").removeChild(button);
             main();
         });
     }
@@ -244,12 +245,12 @@ var V1;
                 Sound.sounds[element.id] = element;
         }
         static play(_id) {
-            Sound.sounds[_id].volume = 0.5;
+            Sound.sounds[_id].volume = 0.1;
             Sound.sounds[_id].play();
         }
         static playMusic() {
             Sound.sounds["gameMusic"].loop = true;
-            Sound.sounds["gameMusic"].volume = 1;
+            Sound.sounds["gameMusic"].volume = 0.3;
             Sound.sounds["gameMusic"].play();
             console.log("music on");
         }
@@ -303,6 +304,7 @@ var V1;
             }
             if (collisionEdges.length > 0) {
                 console.log("COLLISION");
+                V1.Sound.play("impact");
                 let n;
                 if (collisionEdges.length >= 2) {
                     if (collisionEdges[0].distanceToPoint(position) == collisionEdges[1].distanceToPoint(position)) {
