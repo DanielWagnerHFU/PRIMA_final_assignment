@@ -1,15 +1,23 @@
 "use strict";
 var V1;
 (function (V1) {
+    let data;
     window.addEventListener("load", main);
     window.addEventListener("contextmenu", e => {
         e.preventDefault();
     });
     ƒ.RenderManager.initialize(true);
     function main(_event) {
+        load("gamematrix.json");
         let game = new V1.DefenseGame();
         game.init();
         game.startLoop();
+    }
+    async function load(_filename) {
+        let response = await fetch("data.json");
+        let text = await response.text();
+        data = JSON.parse(text);
+        console.log(data.toString());
     }
 })(V1 || (V1 = {}));
 var V1;
