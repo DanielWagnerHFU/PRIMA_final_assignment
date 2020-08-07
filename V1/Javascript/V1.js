@@ -364,7 +364,7 @@ var V1;
             let connectionVector = ƒ.Vector3.DIFFERENCE(this.ip, this.mtxLocal.translation);
             let connectionVectorNormalized = ƒ.Vector3.NORMALIZATION(connectionVector, 1);
             this.cmpMesh.scaling = new ƒ.Vector3(connectionVector.magnitude, 0.1, 0.1);
-            this.hookNode.mtxLocal.translation = ƒ.Vector3.SCALE(connectionVector, 0.5);
+            this.hookNode.mtxLocal.translation = ƒ.Vector3.SCALE(connectionVector, 1);
             let cv = connectionVector.toVector2();
             this.hookNode.mtxLocal.rotation = new ƒ.Vector3(0, 0, Math.atan2(cv.y, cv.x) * 180 / Math.PI);
             connectionVector.scale(2.0);
