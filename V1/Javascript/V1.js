@@ -43,10 +43,13 @@ var V1;
             let camera = new V1.Camera();
             this.gcanvas = new V1.GameCanvas();
             this.gcanvas.init(this.gametree, camera);
-            this.gametree.init(this.gcanvas);
+            this.gametree.init(this.gcanvas, this);
             camera.init(this.gametree.getPlayer());
             document.querySelector("body").appendChild(this.gcanvas);
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+        }
+        end() {
+            document.querySelector("body").removeChild(this.gcanvas);
         }
         startLoop() {
             ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 30);
@@ -96,11 +99,13 @@ var V1;
         constructor(name) {
             super(name);
             this.lineSegments = new Array();
+            this.balls = new Array();
+            this.shapes = new Array();
         }
         getPlayer() {
             return this.player;
         }
-        init(gameCanvis) {
+        init(gameCanvis, _game) {
             let m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -116,12 +121,13 @@ var V1;
                 [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-                [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1],
                 [1, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
             this.generateWorldFromMatrix(m);
             this.generatePlayer(gameCanvis, m);
+            this.generateGoal(m, _game);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
         }
         generateWorldFromMatrix(gameMatrix) {
@@ -132,6 +138,7 @@ var V1;
                     if (gameMatrix[x][y] == 1) {
                         shapeMatrix[x][y] = new V1.ColliderShape(shapeMatrix, x, y, this.lineSegments);
                         this.addChild(shapeMatrix[x][y]);
+                        this.shapes.push(shapeMatrix[x][y]);
                     }
                     else {
                         shapeMatrix[x][y] = null;
@@ -157,8 +164,17 @@ var V1;
             for (let x = 0; x < gameMatrix.length; x++) {
                 for (let y = 0; y < gameMatrix[0].length; y++) {
                     if (gameMatrix[x][y] == 2) {
-                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 0.8, this.lineSegments, gameCanvis.getViewport());
+                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 0.8, this.lineSegments, this.balls, gameCanvis.getViewport());
                         this.addChild(this.player);
+                    }
+                }
+            }
+        }
+        generateGoal(gameMatrix, game) {
+            for (let x = 0; x < gameMatrix.length; x++) {
+                for (let y = 0; y < gameMatrix[0].length; y++) {
+                    if (gameMatrix[x][y] == 3) {
+                        this.addChild(new V1.Goal(new ƒ.Vector3(x, y, 0), 0.8, this.balls, game));
                     }
                 }
             }
@@ -169,9 +185,11 @@ var V1;
 var V1;
 (function (V1) {
     class Ball extends V1.GameObject {
-        constructor(_position, _radius, _lineSegments) {
+        constructor(_position, _radius, _lineSegments, _balls) {
             super("Ball");
             this.mass = 1;
+            this.balls = _balls;
+            this.balls.push(this);
             this.forces = new Map();
             this.radius = _radius;
             this.v = new ƒ.Vector3(0, 0, 0);
@@ -184,7 +202,8 @@ var V1;
             let cmpMesh = new ƒ.ComponentMesh(Ball.mesh);
             this.addComponent(cmpMesh);
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
-            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+            this.listenerUpdate = this.update.bind(this);
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.listenerUpdate);
         }
         getPosition() {
             return this.mtxLocal.translation;
@@ -266,17 +285,54 @@ var V1;
 var V1;
 (function (V1) {
     class EnemyBall extends V1.Ball {
-        constructor(_position, _radius, _lineSegments) {
-            super(_position, _radius, _lineSegments);
+        constructor(_position, _radius, _lineSegments, _balls) {
+            super(_position, _radius, _lineSegments, _balls);
         }
     }
     V1.EnemyBall = EnemyBall;
 })(V1 || (V1 = {}));
 var V1;
 (function (V1) {
+    class Goal extends V1.GameObject {
+        constructor(_position, _radius, _balls, _game) {
+            super("Ball");
+            this.balls = _balls;
+            this.radius = _radius;
+            this.game = _game;
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
+            let cmpMaterial = new ƒ.ComponentMaterial(Goal.material);
+            cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
+            this.addComponent(cmpMaterial);
+            let cmpMesh = new ƒ.ComponentMesh(Goal.mesh);
+            this.addComponent(cmpMesh);
+            cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
+            this.player = this.getPlayer();
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+        }
+        update(_event) {
+            if (ƒ.Vector3.DIFFERENCE(this.mtxLocal.translation, this.player.mtxLocal.translation).magnitude < this.radius) {
+                console.log("REACHED GOAL");
+                this.game.end();
+            }
+        }
+        getPlayer() {
+            for (let b of this.balls) {
+                if (b instanceof V1.PlayerBall) {
+                    return b;
+                }
+            }
+            return null;
+        }
+    }
+    Goal.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.0, 0.5, 1.0, 1)));
+    Goal.mesh = new ƒ.MeshSphere(12, 9);
+    V1.Goal = Goal;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
     class HookerBall extends V1.Ball {
-        constructor(_position, _radius, _lineSegments) {
-            super(_position, _radius, _lineSegments);
+        constructor(_position, _radius, _lineSegments, _balls) {
+            super(_position, _radius, _lineSegments, _balls);
             this.listener = null;
             this.hook = null;
         }
@@ -342,8 +398,8 @@ var V1;
 var V1;
 (function (V1) {
     class PlayerBall extends V1.HookerBall {
-        constructor(_position, _radius, _lineSegments, _viewport) {
-            super(_position, _radius, _lineSegments);
+        constructor(_position, _radius, _lineSegments, _balls, _viewport) {
+            super(_position, _radius, _lineSegments, _balls);
             this.viewport = _viewport;
             this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
             this.init();
@@ -562,7 +618,6 @@ var V1;
             }
         }
     }
-    ColliderShape.material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
     ColliderShape.mesh = new ƒ.MeshCube();
     V1.ColliderShape = ColliderShape;
 })(V1 || (V1 = {}));

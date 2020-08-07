@@ -7,13 +7,18 @@ namespace V1 {
     protected mass: number = 1;
     protected a: ƒ.Vector3;
     protected lineSegments: LineSegment[];
+    protected balls: Ball[];
     private radius: number;
     private v: ƒ.Vector3;
     private collisionDamping: number;
     private lastPosition: ƒ.Vector3;
+    
+    private listenerUpdate: EventListener;
 
-    constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[]) {
+    constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _balls: Ball[]) {
       super("Ball");
+      this.balls = _balls;
+      this.balls.push(this);
       this.forces =  new Map<string, ƒ.Vector3>();
       this.radius = _radius;
       this.v = new ƒ.Vector3(0, 0, 0);
@@ -27,8 +32,8 @@ namespace V1 {
       let cmpMesh: ƒ.ComponentMesh = new ƒ.ComponentMesh(Ball.mesh);
       this.addComponent(cmpMesh);
       cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
-
-      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));
+      this.listenerUpdate = this.update.bind(this);
+      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.listenerUpdate);
     }
 
     public getPosition(): ƒ.Vector3 {
@@ -96,6 +101,8 @@ namespace V1 {
       this.updateSpeed();
       this.updatePosition();
     }
+
+
 
     private updatePosition(): void {
       this.lastPosition = this.mtxLocal.translation;

@@ -1,6 +1,5 @@
 namespace V1 {
   export class ColliderShape extends GameObject {
-    private static material: ƒ.Material = new ƒ.Material("Cube", ƒ.ShaderFlat, new ƒ.CoatColored());
     private static mesh: ƒ.MeshCube = new ƒ.MeshCube();
 
     public leftShape: ColliderShape; //wenn null dann free

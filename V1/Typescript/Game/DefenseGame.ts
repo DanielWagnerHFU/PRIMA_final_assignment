@@ -13,11 +13,16 @@ namespace V1 {
       this.gcanvas = new GameCanvas();
       this.gcanvas.init(this.gametree, camera);
 
-      this.gametree.init(this.gcanvas);
+      this.gametree.init(this.gcanvas, this);
       camera.init(this.gametree.getPlayer());
       
       document.querySelector("body").appendChild(this.gcanvas);
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));
+    }
+
+    public end(): void {
+      document.querySelector("body").removeChild(this.gcanvas);
+      
     }
 
     public startLoop(): void {

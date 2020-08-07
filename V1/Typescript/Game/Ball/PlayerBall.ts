@@ -4,8 +4,8 @@ namespace V1 {
     private ray: ƒ.Ray;
     private viewport: ƒ.Viewport;
 
-    constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _viewport: ƒ.Viewport) {
-      super(_position, _radius, _lineSegments);
+    constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _balls: Ball[], _viewport: ƒ.Viewport) {
+      super(_position, _radius, _lineSegments, _balls);
       this.viewport = _viewport;
       this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
       this.init();
