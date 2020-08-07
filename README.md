@@ -1,12 +1,15 @@
-# PRIMA_final_assignment
+# Prima
+Repository for the final assignment in "Prototyping interactive media-applications and games" at Furtwangen University
 
 [Pages-Version](https://danielwagnerhfu.github.io/PRIMA_final_assignment/)
 
+## Checkliste für Leistungsnachweis
+
 | Nr | Bezeichnung           | Inhalt                                                                                                                                                                                                                                                                         |
 |---:|-----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|    | Titel                 | Hooker
-|    | Name                  | Daniel Wagner
-|    | Matrikelnummer        | 259256
+|    | Titel                 |
+|    | Name                  |
+|    | Matrikelnummer        |
 |  1 | Nutzerinteraktion     | Der Nutzer kann mit der Applikation interagieren. Mit welchen Mitteln und welchen Aktionen werden welche Reaktionen ausgelöst?                                                                                                                                                 |
 |  2 | Objektinteraktion     | Mit Hilfe von Kollisionsprüfung interagieren Objekte miteinander. Wann passiert dabei wie was?                                                                                                                                                                                 |
 |  3 | Objektanzahl variabel | Eine variable Anzahl von Objekten wird zur Laufzeit generiert. Welche sind dies und wann und wie geschieht die Erzeugung?                                                                                                                                                      |
