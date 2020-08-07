@@ -133,14 +133,11 @@ var V1;
             for (let b of this.balls) {
                 b.removeAllListeners();
             }
-            for (let s of this.shapes) {
-                //s.removeAllListeners();
-            }
         }
         init(gameCanvis, _game) {
             let m;
             if (V1.globalMatrix == null) {
-                console.log("default Matrix loaded");
+                console.log("default Matrix loaded :: TESTLEVEL");
                 m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                     [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -166,7 +163,7 @@ var V1;
                 m = V1.globalMatrix.level;
             }
             this.generateWorldFromMatrix(m);
-            this.generatePlayer(gameCanvis, m);
+            this.generatePlayer(gameCanvis, m, _game);
             this.generateGoal(m, _game);
             ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
         }
@@ -200,11 +197,11 @@ var V1;
                 }
             }
         }
-        generatePlayer(gameCanvis, gameMatrix) {
+        generatePlayer(gameCanvis, gameMatrix, game) {
             for (let x = 0; x < gameMatrix.length; x++) {
                 for (let y = 0; y < gameMatrix[0].length; y++) {
                     if (gameMatrix[x][y] == 2) {
-                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 0.7, this.lineSegments, this.balls, gameCanvis.getViewport());
+                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 0.7, this.lineSegments, this.balls, gameCanvis.getViewport(), game);
                         this.addChild(this.player);
                     }
                 }
@@ -448,17 +445,28 @@ var V1;
 var V1;
 (function (V1) {
     class PlayerBall extends V1.HookerBall {
-        constructor(_position, _radius, _lineSegments, _balls, _viewport) {
+        constructor(_position, _radius, _lineSegments, _balls, _viewport, _game) {
             super(_position, _radius, _lineSegments, _balls);
             this.viewport = _viewport;
             this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
             this.init();
+            this.updateIsAlive = this.updateAlive.bind(this);
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updateIsAlive);
         }
         removeAllListeners() {
             ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, super.listener);
             ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, super.listenerUpdate);
             this.viewport.removeEventListener("\u0192pointerdown" /* DOWN */, this.downListener);
             this.viewport.removeEventListener("\u0192pointerup" /* UP */, this.upListener);
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.updateIsAlive);
+        }
+        die() {
+            this.game.end("YOU DIED");
+        }
+        updateAlive(_event) {
+            if (this.mtxLocal.translation.y < -5) {
+                this.game.end("You died");
+            }
         }
         init() {
             this.viewport.activatePointerEvent("\u0192pointerdown" /* DOWN */, true);

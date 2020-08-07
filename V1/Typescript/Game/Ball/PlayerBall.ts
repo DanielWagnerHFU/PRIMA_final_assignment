@@ -3,22 +3,37 @@ namespace V1 {
 
     private downListener: EventListener;
     private upListener: EventListener;
+    private updateIsAlive: EventListener;
     private ray: ƒ.Ray;
     private viewport: ƒ.Viewport;
+    private game: DefenseGame;
 
-    constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _balls: Ball[], _viewport: ƒ.Viewport) {
+    constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _balls: Ball[], _viewport: ƒ.Viewport, _game: DefenseGame) {
       super(_position, _radius, _lineSegments, _balls);
       this.viewport = _viewport;
       this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
       this.init();
+      this.updateIsAlive = this.updateAlive.bind(this);
+      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updateIsAlive);
     }
 
     public removeAllListeners(): void {
       ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, super.listener);
       ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, super.listenerUpdate);
       this.viewport.removeEventListener(ƒ.EVENT_POINTER.DOWN, this.downListener);
-      this.viewport.removeEventListener(ƒ.EVENT_POINTER.UP, this.upListener);  
-    }    
+      this.viewport.removeEventListener(ƒ.EVENT_POINTER.UP, this.upListener);
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.updateIsAlive);
+    }
+
+    public die(): void {
+      this.game.end("YOU DIED");
+    }
+
+    private updateAlive(_event: ƒ.Eventƒ): void {
+      if (this.mtxLocal.translation.y < -5) {
+        this.game.end("You died");
+      }
+    }
 
     private init(): void {
       this.viewport.activatePointerEvent(ƒ.EVENT_POINTER.DOWN, true);

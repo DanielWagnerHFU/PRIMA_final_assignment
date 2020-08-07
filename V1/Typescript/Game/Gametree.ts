@@ -21,18 +21,15 @@ namespace V1 {
     }
 
     public removeAllListeners(): void {
-      for(let b of this.balls) {
+      for (let b of this.balls) {
         b.removeAllListeners();
-      }
-      for (let s of this.shapes) {
-        //s.removeAllListeners();
       }
     }
 
     public init(gameCanvis: GameCanvas, _game: DefenseGame): void {
       let m: number[][];
       if (globalMatrix == null) {
-        console.log("default Matrix loaded");
+        console.log("default Matrix loaded :: TESTLEVEL");
         m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1], 
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1], 
         [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1], 
@@ -58,7 +55,7 @@ namespace V1 {
       }
 
       this.generateWorldFromMatrix(m);
-      this.generatePlayer(gameCanvis, m);
+      this.generatePlayer(gameCanvis, m, _game);
       this.generateGoal(m, _game);
       ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
     }
@@ -95,11 +92,11 @@ namespace V1 {
       }
     }
 
-    private generatePlayer(gameCanvis: GameCanvas, gameMatrix: number[][]): void {
+    private generatePlayer(gameCanvis: GameCanvas, gameMatrix: number[][], game: DefenseGame): void {
       for (let x: number = 0; x < gameMatrix.length; x++) {
         for (let y: number = 0; y < gameMatrix[0].length; y++) {
           if (gameMatrix[x][y] == 2) {
-            this.player = new PlayerBall(new ƒ.Vector3(x, y, 0), 0.7, this.lineSegments, this.balls, gameCanvis.getViewport());
+            this.player = new PlayerBall(new ƒ.Vector3(x, y, 0), 0.7, this.lineSegments, this.balls, gameCanvis.getViewport(), game);
             this.addChild(this.player);
           }
         }
