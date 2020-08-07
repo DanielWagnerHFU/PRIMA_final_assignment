@@ -3,7 +3,7 @@ namespace V1 {
     private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.3, 0.4, 0.0, 1)));
     private static hookmesh: ƒ.MeshCube = new ƒ.MeshCube();
 
-    private listener: EventListener;
+    protected listener: EventListener;
     private hookNode: GameObject;
     private cmpMesh: ƒ.Matrix4x4;
     private ip: ƒ.Vector3;
@@ -13,6 +13,11 @@ namespace V1 {
       this.listener = null;
       this.hook = null;
     }
+
+    public removeAllListeners(): void {
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.listener);
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, super.listenerUpdate);
+    }    
 
     protected hook(direction: ƒ.Vector2): void {
       this.ip = this.hookIntersectionPoint(direction).toVector3(0);

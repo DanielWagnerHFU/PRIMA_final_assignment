@@ -20,6 +20,15 @@ namespace V1 {
       return this.player;
     }
 
+    public removeAllListeners(): void {
+      for(let b of this.balls) {
+        b.removeAllListeners();
+      }
+      for (let s of this.shapes) {
+        //s.removeAllListeners();
+      }
+    }
+
     public init(gameCanvis: GameCanvas, _game: DefenseGame): void {
       let m: number[][];
       if (globalMatrix == null) {

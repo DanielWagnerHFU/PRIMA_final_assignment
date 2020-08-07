@@ -30,7 +30,7 @@ namespace V1 {
     private update(_event: ƒ.Eventƒ): void {
       if (ƒ.Vector3.DIFFERENCE(this.mtxLocal.translation, this.player.mtxLocal.translation).magnitude < (this.radius + this.player.getRadius()) / 2) {
         console.log("REACHED GOAL");
-        this.game.end();
+        this.game.end("YOU WON");
       }
     }
 

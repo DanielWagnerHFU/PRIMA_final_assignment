@@ -1,6 +1,8 @@
 namespace V1 {
   export class PlayerBall extends HookerBall {
 
+    private downListener: EventListener;
+    private upListener: EventListener;
     private ray: ƒ.Ray;
     private viewport: ƒ.Viewport;
 
@@ -11,11 +13,20 @@ namespace V1 {
       this.init();
     }
 
+    public removeAllListeners(): void {
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, super.listener);
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, super.listenerUpdate);
+      this.viewport.removeEventListener(ƒ.EVENT_POINTER.DOWN, this.downListener);
+      this.viewport.removeEventListener(ƒ.EVENT_POINTER.UP, this.upListener);  
+    }    
+
     private init(): void {
       this.viewport.activatePointerEvent(ƒ.EVENT_POINTER.DOWN, true);
       this.viewport.activatePointerEvent(ƒ.EVENT_POINTER.UP, true);
-      this.viewport.addEventListener(ƒ.EVENT_POINTER.DOWN, this.hndPointerDOWN.bind(this));
-      this.viewport.addEventListener(ƒ.EVENT_POINTER.UP, this.hndPointerUP.bind(this));
+      this.upListener = this.hndPointerUP.bind(this);
+      this.downListener = this.hndPointerDOWN.bind(this);
+      this.viewport.addEventListener(ƒ.EVENT_POINTER.DOWN, this.downListener);
+      this.viewport.addEventListener(ƒ.EVENT_POINTER.UP, this.upListener);
     }
 
     private hndPointerDOWN(_event: ƒ.EventPointer): void {

@@ -3,6 +3,7 @@ namespace V1 {
     private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.8, 0.0, 1)));
     private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(12, 9);
 
+    protected listenerUpdate: EventListener;
     protected forces: Map<string, ƒ.Vector3>;
     protected mass: number = 1;
     protected a: ƒ.Vector3;
@@ -12,8 +13,6 @@ namespace V1 {
     private v: ƒ.Vector3;
     private collisionDamping: number;
     private lastPosition: ƒ.Vector3;
-    
-    private listenerUpdate: EventListener;
 
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _balls: Ball[]) {
       super("Ball");
@@ -34,6 +33,10 @@ namespace V1 {
       cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
       this.listenerUpdate = this.update.bind(this);
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.listenerUpdate);
+    }
+
+    public removeAllListeners(): void {
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.listenerUpdate);
     }
 
     public getRadius(): number {

@@ -59,10 +59,21 @@ var V1;
             this.gametree.init(this.gcanvas, this);
             camera.init(this.gametree.getPlayer());
             document.querySelector("body").appendChild(this.gcanvas);
-            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
+            this.updateListener = this.update.bind(this);
+            ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updateListener);
         }
-        end() {
+        end(message) {
+            ƒ.Loop.stop();
+            this.gametree.removeAllListeners();
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.updateListener);
             document.querySelector("body").removeChild(this.gcanvas);
+            this.gcanvas = null;
+            this.gametree = null;
+            console.log("END");
+            let para = document.createElement("p");
+            let node = document.createTextNode(message);
+            para.appendChild(node);
+            document.querySelector("body").appendChild(para);
         }
         startLoop() {
             ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 30);
@@ -117,6 +128,14 @@ var V1;
         }
         getPlayer() {
             return this.player;
+        }
+        removeAllListeners() {
+            for (let b of this.balls) {
+                b.removeAllListeners();
+            }
+            for (let s of this.shapes) {
+                //s.removeAllListeners();
+            }
         }
         init(gameCanvis, _game) {
             let m;
@@ -225,6 +244,9 @@ var V1;
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
             this.listenerUpdate = this.update.bind(this);
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.listenerUpdate);
+        }
+        removeAllListeners() {
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.listenerUpdate);
         }
         getRadius() {
             return this.radius;
@@ -336,7 +358,7 @@ var V1;
         update(_event) {
             if (ƒ.Vector3.DIFFERENCE(this.mtxLocal.translation, this.player.mtxLocal.translation).magnitude < (this.radius + this.player.getRadius()) / 2) {
                 console.log("REACHED GOAL");
-                this.game.end();
+                this.game.end("YOU WON");
             }
         }
         getPlayer() {
@@ -359,6 +381,10 @@ var V1;
             super(_position, _radius, _lineSegments, _balls);
             this.listener = null;
             this.hook = null;
+        }
+        removeAllListeners() {
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, super.listenerUpdate);
         }
         hook(direction) {
             this.ip = this.hookIntersectionPoint(direction).toVector3(0);
@@ -428,11 +454,19 @@ var V1;
             this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
             this.init();
         }
+        removeAllListeners() {
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, super.listener);
+            ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, super.listenerUpdate);
+            this.viewport.removeEventListener("\u0192pointerdown" /* DOWN */, this.downListener);
+            this.viewport.removeEventListener("\u0192pointerup" /* UP */, this.upListener);
+        }
         init() {
             this.viewport.activatePointerEvent("\u0192pointerdown" /* DOWN */, true);
             this.viewport.activatePointerEvent("\u0192pointerup" /* UP */, true);
-            this.viewport.addEventListener("\u0192pointerdown" /* DOWN */, this.hndPointerDOWN.bind(this));
-            this.viewport.addEventListener("\u0192pointerup" /* UP */, this.hndPointerUP.bind(this));
+            this.upListener = this.hndPointerUP.bind(this);
+            this.downListener = this.hndPointerDOWN.bind(this);
+            this.viewport.addEventListener("\u0192pointerdown" /* DOWN */, this.downListener);
+            this.viewport.addEventListener("\u0192pointerup" /* UP */, this.upListener);
         }
         hndPointerDOWN(_event) {
             this.ray = this.viewport.getRayFromClient(new ƒ.Vector2(_event.pointerX, _event.pointerY));

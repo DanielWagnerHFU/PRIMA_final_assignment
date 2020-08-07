@@ -4,6 +4,7 @@ namespace V1 {
     
     private gametree: Gametree;
     private gcanvas: GameCanvas;
+    private updateListener: EventListener;
 
     public init(): void {
       this.gametree = new Gametree("gametree");
@@ -17,12 +18,23 @@ namespace V1 {
       camera.init(this.gametree.getPlayer());
       
       document.querySelector("body").appendChild(this.gcanvas);
-      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));
+      this.updateListener = this.update.bind(this);
+      ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.updateListener);
     }
 
-    public end(): void {
+    public end(message: string): void {
+      ƒ.Loop.stop();
+      this.gametree.removeAllListeners();
+      ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.updateListener);
       document.querySelector("body").removeChild(this.gcanvas);
-      
+      this.gcanvas = null;
+      this.gametree = null;
+      console.log("END");
+
+      let para: HTMLParagraphElement = document.createElement("p");
+      let node: Text = document.createTextNode(message);
+      para.appendChild(node);
+      document.querySelector("body").appendChild(para);
     }
 
     public startLoop(): void {
