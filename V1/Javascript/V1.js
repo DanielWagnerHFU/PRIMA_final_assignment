@@ -9,7 +9,7 @@ var V1;
     ƒ.RenderManager.initialize(true);
     async function main(_event) {
         try {
-            await load("/V1/Json/gamematrix.json");
+            await load("/PRIMA_final_assignment/V1/Json/gamematrix.json");
         }
         catch (error) {
             console.log("gamematrix.json loading failed");
