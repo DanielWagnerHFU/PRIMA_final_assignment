@@ -1,7 +1,7 @@
 "use strict";
 var V1;
 (function (V1) {
-    V1._global_matrix = null;
+    V1.globalMatrix = null;
     window.addEventListener("load", main);
     window.addEventListener("contextmenu", e => {
         e.preventDefault();
@@ -16,7 +16,7 @@ var V1;
     async function load(_filename) {
         let response = await fetch("gamematrix.json");
         let text = await response.text();
-        V1._global_matrix = JSON.parse(text);
+        V1.globalMatrix = JSON.parse(text);
         console.log("matrix json loaded");
     }
 })(V1 || (V1 = {}));
@@ -115,7 +115,7 @@ var V1;
         }
         init(gameCanvis, _game) {
             let m;
-            if (V1._global_matrix == null) {
+            if (V1.globalMatrix == null) {
                 m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                     [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -137,7 +137,7 @@ var V1;
                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
             }
             else {
-                m = V1._global_matrix.level;
+                m = V1.globalMatrix.level;
             }
             this.generateWorldFromMatrix(m);
             this.generatePlayer(gameCanvis, m);

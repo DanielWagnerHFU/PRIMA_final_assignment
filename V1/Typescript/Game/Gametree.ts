@@ -22,7 +22,7 @@ namespace V1 {
 
     public init(gameCanvis: GameCanvas, _game: DefenseGame): void {
       let m: number[][];
-      if(_global_matrix == null) {
+      if (globalMatrix == null) {
         m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1], 
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1], 
         [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1], 
@@ -43,7 +43,7 @@ namespace V1 {
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1]]; 
       } else {
-        m = _global_matrix.level;
+        m = globalMatrix.level;
       }
 
       this.generateWorldFromMatrix(m);
