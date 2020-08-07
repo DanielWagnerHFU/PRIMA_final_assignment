@@ -39,7 +39,7 @@ namespace V1 {
       [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1]]; 
       this.generateWorldFromMatrix(m);
       this.generatePlayer(gameCanvis, m);
-      ƒAid.addStandardLightComponents(this, new ƒ.Color(0.9, 0.6, 0.6));
+      ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
     }
 
     private generateWorldFromMatrix(gameMatrix: number[][]): void {

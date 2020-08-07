@@ -1,10 +1,11 @@
 namespace V1 {
   export class Ball extends GameObject {
-    private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.2, 0.2, 1)));
+    private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.4, 0.2, 0.6, 1)));
     private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(12, 9);
 
+    protected forces: Map<string, ƒ.Vector3>;
+    protected mass: number = 1;
     protected a: ƒ.Vector3;
-    protected gravity: ƒ.Vector3 = new ƒ.Vector3(0, -3.5, 0);
     protected lineSegments: LineSegment[];
     private radius: number;
     private v: ƒ.Vector3;
@@ -13,9 +14,9 @@ namespace V1 {
 
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[]) {
       super("Ball");
+      this.forces =  new Map<string, ƒ.Vector3>();
       this.radius = _radius;
       this.v = new ƒ.Vector3(0, 0, 0);
-      this.a = this.gravity;
       this.collisionDamping = 0.95;
       this.lineSegments = _lineSegments;
 
@@ -82,7 +83,16 @@ namespace V1 {
       }
     }
 
+    protected updateAcceleration(): void {
+      let forces: IterableIterator<ƒ.Vector3> = this.forces.values();
+      this.a = new ƒ.Vector3(0, 0, 0);
+      for (let force of forces) {
+        this.a.add(ƒ.Vector3.SCALE(force, 1 / this.mass));
+      }
+    }
+
     private update(_event: ƒ.Eventƒ): void {
+      this.updateAcceleration();
       this.updateSpeed();
       this.updatePosition();
     }

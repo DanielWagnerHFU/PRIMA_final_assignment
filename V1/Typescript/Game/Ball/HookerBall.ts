@@ -1,6 +1,6 @@
 namespace V1 {
   export class HookerBall extends Ball {
-    private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.6, 0.4, 1)));
+    private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.2, 0.0, 0.4, 1)));
     private static hookmesh: ƒ.MeshCube = new ƒ.MeshCube();
 
     private listener: EventListener;
@@ -38,10 +38,10 @@ namespace V1 {
     }
 
     protected unhook(): void {
+      this.forces.delete("hook");
       ƒ.Loop.removeEventListener(ƒ.EVENT.LOOP_FRAME, this.listener);
       this.removeChild(this.hookNode);
       this.hookNode = null;
-      this.a = this.gravity;
     }
 
     private updateHook(_event: ƒ.Eventƒ): void {
@@ -53,7 +53,7 @@ namespace V1 {
       this.hookNode.mtxLocal.rotation = new ƒ.Vector3(0, 0, Math.atan2(cv.y, cv.x) * 180 / Math.PI);
       connectionVector.scale(2.0);
       connectionVectorNormalized.scale(3);
-      this.a = ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector, this.gravity);
+      this.forces.set("hook", ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector));
     }
 
     private hookIntersectionPoint(direction: ƒ.Vector2): ƒ.Vector2 {

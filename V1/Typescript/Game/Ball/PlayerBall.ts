@@ -7,6 +7,7 @@ namespace V1 {
     constructor(_position: ƒ.Vector3, _radius: number, _lineSegments: LineSegment[], _viewport: ƒ.Viewport) {
       super(_position, _radius, _lineSegments);
       this.viewport = _viewport;
+      this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
       this.init();
     }
 
@@ -22,7 +23,6 @@ namespace V1 {
       let pos: ƒ.Vector3 = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
       let direction: ƒ.Vector3 = ƒ.Vector3.SUM(ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
       super.hook(direction.toVector2());
-      //THROW HOOK
     }
 
     private hndPointerUP(_event: ƒ.EventPointer): void {

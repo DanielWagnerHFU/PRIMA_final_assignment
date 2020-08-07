@@ -29,9 +29,9 @@ namespace V1 {
       this.lineSegments = _lineSegments;
 
       let position: ƒ.Vector2 = new ƒ.Vector2(x, y);
-      this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(Math.random() * (-0.3 - 0.3) + -0.3))));
+      this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(Math.random() * (-0.4 - 0.4) + -0.4))));
 
-      let cmpMaterial: ƒ.ComponentMaterial = new ƒ.ComponentMaterial(ColliderShape.material);
+      let cmpMaterial: ƒ.ComponentMaterial = new ƒ.ComponentMaterial(new ƒ.Material("Shape", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(Math.random(), 0.2, 0.1, 1))));
       cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
       this.addComponent(cmpMaterial);
 
@@ -41,10 +41,6 @@ namespace V1 {
     }
 
     public generateLineSegments(): void {
-      //Diese Methode sollte man am besten schnell vergessen und nicht im Detail anschauen.
-      //Kurz gesagt: es werden die Körper mit LineSegments umlegt aber dabei wird darauf geachtet dass keine LineSegments im Körper sind
-      //Und dass keine LineSegments nebeneinander sind - stattdessen wird über mehrere Cubes hinweg ein LineSegment gelegt.
-      //Das ganze ist garnicht mal so einfach und auf die kürze ist das alles was mir eingefallen ist. 
       if (this.topShape == null && this.topSideUnhandled) {
         this.topSideUnhandled = false;
 

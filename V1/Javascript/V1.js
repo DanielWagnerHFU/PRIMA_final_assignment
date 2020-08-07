@@ -22,7 +22,7 @@ var V1;
             this.player = _player;
             this.pivot.translate(new ƒ.Vector3(4, 4, 20));
             this.pivot.lookAt(new ƒ.Vector3(4, 4, 0));
-            this.backgroundColor = ƒ.Color.CSS("black");
+            this.backgroundColor = ƒ.Color.CSS("Maroon");
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
         }
         update(_event) {
@@ -122,7 +122,7 @@ var V1;
                 [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
             this.generateWorldFromMatrix(m);
             this.generatePlayer(gameCanvis, m);
-            ƒAid.addStandardLightComponents(this, new ƒ.Color(0.9, 0.6, 0.6));
+            ƒAid.addStandardLightComponents(this, new ƒ.Color(0.6, 0.6, 0.6));
         }
         generateWorldFromMatrix(gameMatrix) {
             let shapeMatrix = [];
@@ -171,10 +171,10 @@ var V1;
     class Ball extends V1.GameObject {
         constructor(_position, _radius, _lineSegments) {
             super("Ball");
-            this.gravity = new ƒ.Vector3(0, -3.5, 0);
+            this.mass = 1;
+            this.forces = new Map();
             this.radius = _radius;
             this.v = new ƒ.Vector3(0, 0, 0);
-            this.a = this.gravity;
             this.collisionDamping = 0.95;
             this.lineSegments = _lineSegments;
             this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(_position)));
@@ -238,7 +238,15 @@ var V1;
                 this.mtxLocal.translation = this.lastPosition;
             }
         }
+        updateAcceleration() {
+            let forces = this.forces.values();
+            this.a = new ƒ.Vector3(0, 0, 0);
+            for (let force of forces) {
+                this.a.add(ƒ.Vector3.SCALE(force, 1 / this.mass));
+            }
+        }
         update(_event) {
+            this.updateAcceleration();
             this.updateSpeed();
             this.updatePosition();
         }
@@ -251,9 +259,18 @@ var V1;
             this.v = ƒ.Vector3.SUM(this.v, (ƒ.Vector3.SCALE(this.a, ƒ.Loop.timeFrameReal / 1000)));
         }
     }
-    Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.2, 0.2, 1)));
+    Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.4, 0.2, 0.6, 1)));
     Ball.mesh = new ƒ.MeshSphere(12, 9);
     V1.Ball = Ball;
+})(V1 || (V1 = {}));
+var V1;
+(function (V1) {
+    class EnemyBall extends V1.Ball {
+        constructor(_position, _radius, _lineSegments) {
+            super(_position, _radius, _lineSegments);
+        }
+    }
+    V1.EnemyBall = EnemyBall;
 })(V1 || (V1 = {}));
 var V1;
 (function (V1) {
@@ -282,10 +299,10 @@ var V1;
             }
         }
         unhook() {
+            this.forces.delete("hook");
             ƒ.Loop.removeEventListener("loopFrame" /* LOOP_FRAME */, this.listener);
             this.removeChild(this.hookNode);
             this.hookNode = null;
-            this.a = this.gravity;
         }
         updateHook(_event) {
             let connectionVector = ƒ.Vector3.DIFFERENCE(this.ip, this.mtxLocal.translation);
@@ -296,7 +313,7 @@ var V1;
             this.hookNode.mtxLocal.rotation = new ƒ.Vector3(0, 0, Math.atan2(cv.y, cv.x) * 180 / Math.PI);
             connectionVector.scale(2.0);
             connectionVectorNormalized.scale(3);
-            this.a = ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector, this.gravity);
+            this.forces.set("hook", ƒ.Vector3.SUM(connectionVectorNormalized, connectionVector));
         }
         hookIntersectionPoint(direction) {
             direction.normalize(0.01);
@@ -318,7 +335,7 @@ var V1;
             return ip;
         }
     }
-    HookerBall.hookmaterial = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.6, 0.4, 1)));
+    HookerBall.hookmaterial = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.2, 0.0, 0.4, 1)));
     HookerBall.hookmesh = new ƒ.MeshCube();
     V1.HookerBall = HookerBall;
 })(V1 || (V1 = {}));
@@ -328,6 +345,7 @@ var V1;
         constructor(_position, _radius, _lineSegments, _viewport) {
             super(_position, _radius, _lineSegments);
             this.viewport = _viewport;
+            this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
             this.init();
         }
         init() {
@@ -341,7 +359,6 @@ var V1;
             let pos = this.ray.intersectPlane(ƒ.Vector3.ZERO(), ƒ.Vector3.Z(1));
             let direction = ƒ.Vector3.SUM(ƒ.Vector3.DIFFERENCE(pos, this.mtxLocal.translation));
             super.hook(direction.toVector2());
-            //THROW HOOK
         }
         hndPointerUP(_event) {
             super.unhook();
@@ -428,8 +445,8 @@ var V1;
             this.y = y;
             this.lineSegments = _lineSegments;
             let position = new ƒ.Vector2(x, y);
-            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(Math.random() * (-0.3 - 0.3) + -0.3))));
-            let cmpMaterial = new ƒ.ComponentMaterial(ColliderShape.material);
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(Math.random() * (-0.4 - 0.4) + -0.4))));
+            let cmpMaterial = new ƒ.ComponentMaterial(new ƒ.Material("Shape", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(Math.random(), 0.2, 0.1, 1))));
             cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
             this.addComponent(cmpMaterial);
             let cmpMesh = new ƒ.ComponentMesh(ColliderShape.mesh);
@@ -437,10 +454,6 @@ var V1;
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.scale));
         }
         generateLineSegments() {
-            //Diese Methode sollte man am besten schnell vergessen und nicht im Detail anschauen.
-            //Kurz gesagt: es werden die Körper mit LineSegments umlegt aber dabei wird darauf geachtet dass keine LineSegments im Körper sind
-            //Und dass keine LineSegments nebeneinander sind - stattdessen wird über mehrere Cubes hinweg ein LineSegment gelegt.
-            //Das ganze ist garnicht mal so einfach und auf die kürze ist das alles was mir eingefallen ist. 
             if (this.topShape == null && this.topSideUnhandled) {
                 this.topSideUnhandled = false;
                 let currentShape = this;

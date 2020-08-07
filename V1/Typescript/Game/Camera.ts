@@ -10,7 +10,7 @@ namespace V1 {
       this.player = _player;
       this.pivot.translate(new ƒ.Vector3(4, 4, 20));
       this.pivot.lookAt(new ƒ.Vector3(4, 4, 0));
-      this.backgroundColor = ƒ.Color.CSS("black");
+      this.backgroundColor = ƒ.Color.CSS("Maroon");
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.update.bind(this));  
     }
 
