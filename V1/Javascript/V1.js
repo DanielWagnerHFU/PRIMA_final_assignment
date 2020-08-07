@@ -116,6 +116,7 @@ var V1;
         init(gameCanvis, _game) {
             let m;
             if (V1.globalMatrix == null) {
+                console.log("default Matrix loaded");
                 m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
                     [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
@@ -137,6 +138,7 @@ var V1;
                     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]];
             }
             else {
+                console.log("Matrix from json loaded");
                 m = V1.globalMatrix.level;
             }
             this.generateWorldFromMatrix(m);

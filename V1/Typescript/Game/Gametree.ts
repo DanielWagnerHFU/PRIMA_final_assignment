@@ -23,6 +23,7 @@ namespace V1 {
     public init(gameCanvis: GameCanvas, _game: DefenseGame): void {
       let m: number[][];
       if (globalMatrix == null) {
+        console.log("default Matrix loaded");
         m = [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1], 
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1], 
         [1, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1], 
@@ -43,6 +44,7 @@ namespace V1 {
         [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 , 1],
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 , 1]]; 
       } else {
+        console.log("Matrix from json loaded");
         m = globalMatrix.level;
       }
 
