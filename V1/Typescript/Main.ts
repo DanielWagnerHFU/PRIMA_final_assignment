@@ -1,19 +1,10 @@
 namespace V1 {
 
-  export interface Data {
-    level: {
-        text: string,
-        number: string,
-        amountOfBombs: string,
-        lives: string,
-        amountOfObstacles: string,
-        amountOfFood: string,
-        amountOfItems: string,
-        amountOfEnemies: string
-    }[];
+  export interface IMatrix {
+    level: number[][];
   }
 
-  let data: Data;
+  let matrix: IMatrix;
 
   window.addEventListener("load", main);
   window.addEventListener("contextmenu", e => {
@@ -32,7 +23,7 @@ namespace V1 {
   async function load(_filename: string): Promise<void> {
     let response: Response = await fetch("gamematrix.json");
     let text: string = await response.text();
-    data = JSON.parse(text);
-    console.log(data.toString());
+    matrix = JSON.parse(text);
+    console.log(matrix.toString());
   }
 }

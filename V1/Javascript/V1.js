@@ -1,7 +1,7 @@
 "use strict";
 var V1;
 (function (V1) {
-    let data;
+    let matrix;
     window.addEventListener("load", main);
     window.addEventListener("contextmenu", e => {
         e.preventDefault();
@@ -16,8 +16,8 @@ var V1;
     async function load(_filename) {
         let response = await fetch("gamematrix.json");
         let text = await response.text();
-        data = JSON.parse(text);
-        console.log(data.toString());
+        matrix = JSON.parse(text);
+        console.log(matrix.toString());
     }
 })(V1 || (V1 = {}));
 var V1;
