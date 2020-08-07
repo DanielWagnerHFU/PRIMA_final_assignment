@@ -30,7 +30,7 @@ namespace V1 {
   }
 
   async function load(_filename: string): Promise<void> {
-    let response: Response = await fetch("data.json");
+    let response: Response = await fetch("gamematrix.json");
     let text: string = await response.text();
     data = JSON.parse(text);
     console.log(data.toString());

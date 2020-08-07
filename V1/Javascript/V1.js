@@ -14,7 +14,7 @@ var V1;
         game.startLoop();
     }
     async function load(_filename) {
-        let response = await fetch("data.json");
+        let response = await fetch("gamematrix.json");
         let text = await response.text();
         data = JSON.parse(text);
         console.log(data.toString());
