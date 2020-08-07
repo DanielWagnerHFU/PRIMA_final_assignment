@@ -7,8 +7,13 @@ var V1;
         e.preventDefault();
     });
     ƒ.RenderManager.initialize(true);
-    function main(_event) {
-        load("gamematrix.json");
+    async function main(_event) {
+        try {
+            await load("gamematrix.json");
+        }
+        catch (error) {
+            console.log("loading failed");
+        }
         let game = new V1.DefenseGame();
         game.init();
         game.startLoop();

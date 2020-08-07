@@ -12,12 +12,15 @@ namespace V1 {
   });
   ƒ.RenderManager.initialize(true);
 
-  function main(_event: Event): void {
-    load("gamematrix.json");
+  async function main(_event: Event): Promise<void> {
+    try {
+      await load("gamematrix.json");
+    } catch (error) {
+      console.log("loading failed");
+    }
     let game: DefenseGame = new DefenseGame();
     game.init();
     game.startLoop();
-
   }
 
   async function load(_filename: string): Promise<void> {
