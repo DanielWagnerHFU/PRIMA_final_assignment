@@ -17,7 +17,12 @@ var V1;
         let response = await fetch("gamematrix.json");
         let text = await response.text();
         matrix = JSON.parse(text);
-        console.log(matrix.toString());
+        console.log("matrix");
+        for (let a of matrix.level) {
+            for (let b of a) {
+                console.log(b.toString());
+            }
+        }
     }
 })(V1 || (V1 = {}));
 var V1;

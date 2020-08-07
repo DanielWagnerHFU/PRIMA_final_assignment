@@ -24,6 +24,11 @@ namespace V1 {
     let response: Response = await fetch("gamematrix.json");
     let text: string = await response.text();
     matrix = JSON.parse(text);
-    console.log(matrix.toString());
+    console.log("matrix");
+    for (let a of matrix.level) {
+      for (let b of a) {
+        console.log(b.toString());
+      }
+    }
   }
 }
