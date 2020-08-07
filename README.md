@@ -1,9 +1,9 @@
 # Hooker
 Repository for the final assignment in "Prototyping interactive media-applications and games" at Furtwangen University
 
-[Pages-Version](https://danielwagnerhfu.github.io/PRIMA_final_assignment/)
-
 - [|| Play Hooker ||](https://danielwagnerhfu.github.io/PRIMA_final_assignment/V1/Main.html)
+- [|| QuellCode ||](https://danielwagnerhfu.github.io/PRIMA_final_assignment/V1/Main.html)
+- [|| Design Document ||](https://danielwagnerhfu.github.io/PRIMA_final_assignment/V1/Main.html)
 
 
 ## Checkliste für Leistungsnachweis
