@@ -1,11 +1,11 @@
 namespace V1 {
 
-  export interface Sounds {
+  export interface ISounds {
     [id: string]: HTMLAudioElement;
   }
 
   export class Sound {
-    static sounds: Sounds = {};
+    static sounds: ISounds = {};
 
     public static init(): void {
       let audioElements: NodeListOf<HTMLAudioElement> = document.querySelectorAll("audio");

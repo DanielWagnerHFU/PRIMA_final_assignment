@@ -97,6 +97,8 @@ namespace V1 {
     }
 
     protected updateAcceleration(): void {
+      //this.forces.delete("airresistence");
+      this.forces.set("airresistence", new ƒ.Vector3(-0.2 *  this.v.x, -0.2 * this.v.y, 0));
       let forces: IterableIterator<ƒ.Vector3> = this.forces.values();
       this.a = new ƒ.Vector3(0, 0, 0);
       for (let force of forces) {
