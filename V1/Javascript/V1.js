@@ -259,7 +259,7 @@ var V1;
             this.v = ƒ.Vector3.SUM(this.v, (ƒ.Vector3.SCALE(this.a, ƒ.Loop.timeFrameReal / 1000)));
         }
     }
-    Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.4, 0.2, 0.6, 1)));
+    Ball.material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.8, 0.0, 1)));
     Ball.mesh = new ƒ.MeshSphere(12, 9);
     V1.Ball = Ball;
 })(V1 || (V1 = {}));
@@ -335,7 +335,7 @@ var V1;
             return ip;
         }
     }
-    HookerBall.hookmaterial = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.2, 0.0, 0.4, 1)));
+    HookerBall.hookmaterial = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.3, 0.4, 0.0, 1)));
     HookerBall.hookmesh = new ƒ.MeshCube();
     V1.HookerBall = HookerBall;
 })(V1 || (V1 = {}));

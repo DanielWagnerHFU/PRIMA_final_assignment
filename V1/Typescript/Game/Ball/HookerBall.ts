@@ -1,6 +1,6 @@
 namespace V1 {
   export class HookerBall extends Ball {
-    private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.2, 0.0, 0.4, 1)));
+    private static hookmaterial: ƒ.Material = new ƒ.Material("hook", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.3, 0.4, 0.0, 1)));
     private static hookmesh: ƒ.MeshCube = new ƒ.MeshCube();
 
     private listener: EventListener;

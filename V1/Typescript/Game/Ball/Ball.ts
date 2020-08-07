@@ -1,6 +1,6 @@
 namespace V1 {
   export class Ball extends GameObject {
-    private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.4, 0.2, 0.6, 1)));
+    private static material: ƒ.Material = new ƒ.Material("Ball", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(0.7, 0.8, 0.0, 1)));
     private static mesh: ƒ.MeshSphere = new ƒ.MeshSphere(12, 9);
 
     protected forces: Map<string, ƒ.Vector3>;
