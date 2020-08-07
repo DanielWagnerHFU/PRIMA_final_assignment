@@ -74,6 +74,12 @@ var V1;
             let node = document.createTextNode(message);
             para.appendChild(node);
             document.querySelector("body").appendChild(para);
+            var button = document.createElement("button");
+            button.innerHTML = "Reload";
+            document.querySelector("body").appendChild(button);
+            button.addEventListener("click", function () {
+                location.reload();
+            });
         }
         startLoop() {
             ƒ.Loop.start(ƒ.LOOP_MODE.TIME_REAL, 30);

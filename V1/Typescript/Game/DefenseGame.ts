@@ -35,6 +35,12 @@ namespace V1 {
       let node: Text = document.createTextNode(message);
       para.appendChild(node);
       document.querySelector("body").appendChild(para);
+      var button: HTMLButtonElement = document.createElement("button");
+      button.innerHTML = "Reload";
+      document.querySelector("body").appendChild(button);
+      button.addEventListener ("click", function(): void {
+        location.reload();
+      });
     }
 
     public startLoop(): void {
