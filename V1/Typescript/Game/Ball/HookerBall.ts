@@ -15,7 +15,7 @@ namespace V1 {
     }
 
     protected hook(direction: ƒ.Vector2): void {
-      this.ip = this.hookIntersectionPoint(direction).toVector3();
+      this.ip = this.hookIntersectionPoint(direction).toVector3(0);
       if (this.ip != null) {
         this.hookNode = new GameObject("Hook"); //TODO GENERATE HOOK NODE
       
@@ -28,7 +28,7 @@ namespace V1 {
         cmpMesh.pivot.scale(new ƒ.Vector3(1, 0.1 , 0.1));
         this.cmpMesh = cmpMesh.pivot;
 
-        this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0 , 0.5))));
+        this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0 , 0))));
 
         this.addChild(this.hookNode);
         this.updateHook(null);

@@ -28,7 +28,7 @@ namespace V1 {
       this.lineSegments = _lineSegments;
 
       let position: ƒ.Vector2 = new ƒ.Vector2(x, y);
-      this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(Math.random() * (-0.4 - 0.4) + -0.4))));
+      this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3((Math.random() - 0.9) / 2 ))));
 
       let cmpMaterial: ƒ.ComponentMaterial = new ƒ.ComponentMaterial(new ƒ.Material("Shape", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(Math.random(), 0.2, 0.1, 1))));
       cmpMaterial.clrPrimary = ƒ.Color.CSS("white");

@@ -36,6 +36,10 @@ namespace V1 {
       ƒ.Loop.addEventListener(ƒ.EVENT.LOOP_FRAME, this.listenerUpdate);
     }
 
+    public getRadius(): number {
+      return this.radius;
+    }
+
     public getPosition(): ƒ.Vector3 {
       return this.mtxLocal.translation;
     }

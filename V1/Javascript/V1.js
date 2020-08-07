@@ -164,7 +164,7 @@ var V1;
             for (let x = 0; x < gameMatrix.length; x++) {
                 for (let y = 0; y < gameMatrix[0].length; y++) {
                     if (gameMatrix[x][y] == 2) {
-                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 0.8, this.lineSegments, this.balls, gameCanvis.getViewport());
+                        this.player = new V1.PlayerBall(new ƒ.Vector3(x, y, 0), 0.7, this.lineSegments, this.balls, gameCanvis.getViewport());
                         this.addChild(this.player);
                     }
                 }
@@ -204,6 +204,9 @@ var V1;
             cmpMesh.pivot.scale(ƒ.Vector3.ONE(this.radius));
             this.listenerUpdate = this.update.bind(this);
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.listenerUpdate);
+        }
+        getRadius() {
+            return this.radius;
         }
         getPosition() {
             return this.mtxLocal.translation;
@@ -310,7 +313,7 @@ var V1;
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.update.bind(this));
         }
         update(_event) {
-            if (ƒ.Vector3.DIFFERENCE(this.mtxLocal.translation, this.player.mtxLocal.translation).magnitude < this.radius) {
+            if (ƒ.Vector3.DIFFERENCE(this.mtxLocal.translation, this.player.mtxLocal.translation).magnitude < (this.radius + this.player.getRadius()) / 2) {
                 console.log("REACHED GOAL");
                 this.game.end();
             }
@@ -337,7 +340,7 @@ var V1;
             this.hook = null;
         }
         hook(direction) {
-            this.ip = this.hookIntersectionPoint(direction).toVector3();
+            this.ip = this.hookIntersectionPoint(direction).toVector3(0);
             if (this.ip != null) {
                 this.hookNode = new V1.GameObject("Hook"); //TODO GENERATE HOOK NODE
                 let cmpMaterial = new ƒ.ComponentMaterial(HookerBall.hookmaterial);
@@ -347,7 +350,7 @@ var V1;
                 this.hookNode.addComponent(cmpMesh);
                 cmpMesh.pivot.scale(new ƒ.Vector3(1, 0.1, 0.1));
                 this.cmpMesh = cmpMesh.pivot;
-                this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0.5))));
+                this.hookNode.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(new ƒ.Vector3(0, 0, 0))));
                 this.addChild(this.hookNode);
                 this.updateHook(null);
                 this.listener = this.updateHook.bind(this);
@@ -501,7 +504,7 @@ var V1;
             this.y = y;
             this.lineSegments = _lineSegments;
             let position = new ƒ.Vector2(x, y);
-            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3(Math.random() * (-0.4 - 0.4) + -0.4))));
+            this.addComponent(new ƒ.ComponentTransform(ƒ.Matrix4x4.TRANSLATION(position.toVector3((Math.random() - 0.9) / 2))));
             let cmpMaterial = new ƒ.ComponentMaterial(new ƒ.Material("Shape", ƒ.ShaderFlat, new ƒ.CoatColored(new ƒ.Color(Math.random(), 0.2, 0.1, 1))));
             cmpMaterial.clrPrimary = ƒ.Color.CSS("white");
             this.addComponent(cmpMaterial);
