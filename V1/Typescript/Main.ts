@@ -4,7 +4,7 @@ namespace V1 {
     level: number[][];
   }
 
-  let matrix: IMatrix;
+  export let _global_matrix: IMatrix = null;
 
   window.addEventListener("load", main);
   window.addEventListener("contextmenu", e => {
@@ -23,12 +23,7 @@ namespace V1 {
   async function load(_filename: string): Promise<void> {
     let response: Response = await fetch("gamematrix.json");
     let text: string = await response.text();
-    matrix = JSON.parse(text);
-    console.log("matrix");
-    for (let a of matrix.level) {
-      for (let b of a) {
-        console.log(b.toString());
-      }
-    }
+    _global_matrix = JSON.parse(text);
+    console.log("matrix json loaded");
   }
 }
