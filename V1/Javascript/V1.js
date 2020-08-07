@@ -449,6 +449,7 @@ var V1;
             super(_position, _radius, _lineSegments, _balls);
             this.viewport = _viewport;
             this.forces.set("gravity", new ƒ.Vector3(0, -3.3, 0));
+            this.game = _game;
             this.init();
             this.updateIsAlive = this.updateAlive.bind(this);
             ƒ.Loop.addEventListener("loopFrame" /* LOOP_FRAME */, this.updateIsAlive);
