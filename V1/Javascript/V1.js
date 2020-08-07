@@ -9,17 +9,17 @@ var V1;
     ƒ.RenderManager.initialize(true);
     async function main(_event) {
         try {
-            await load("gamematrix.json");
+            await load("/V1/Json/gamematrix.json");
         }
         catch (error) {
-            console.log("loading failed");
+            console.log("gamematrix.json loading failed");
         }
         let game = new V1.DefenseGame();
         game.init();
         game.startLoop();
     }
     async function load(_filename) {
-        let response = await fetch("gamematrix.json");
+        let response = await fetch(_filename);
         let text = await response.text();
         V1.globalMatrix = JSON.parse(text);
         console.log("matrix json loaded");

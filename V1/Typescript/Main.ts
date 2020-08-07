@@ -14,9 +14,9 @@ namespace V1 {
 
   async function main(_event: Event): Promise<void> {
     try {
-      await load("gamematrix.json");
+      await load("/V1/Json/gamematrix.json");
     } catch (error) {
-      console.log("loading failed");
+      console.log("gamematrix.json loading failed");
     }
     let game: DefenseGame = new DefenseGame();
     game.init();
@@ -24,7 +24,7 @@ namespace V1 {
   }
 
   async function load(_filename: string): Promise<void> {
-    let response: Response = await fetch("gamematrix.json");
+    let response: Response = await fetch(_filename);
     let text: string = await response.text();
     globalMatrix = JSON.parse(text);
     console.log("matrix json loaded");
